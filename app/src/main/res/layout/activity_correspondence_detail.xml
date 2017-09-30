@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_correspondence_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.ntsoft.ihhq.controller.correspondence.CorrespondenceDetailActivity">
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/custom_toolbar_back">
+            </include>
+
+
+        </android.support.design.widget.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/dimen_12dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/rl_editor_container">
+                <com.handmark.pulltorefresh.library.PullToRefreshListView
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/lv_home"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:smoothScrollbar="true">
+                </com.handmark.pulltorefresh.library.PullToRefreshListView>
+            </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/rl_editor_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/lightGray"
+                >
+                <ImageButton
+                    android:id="@+id/ib_attach"
+                    android:layout_width="36dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/ic_att"
+                    android:layout_marginLeft="@dimen/dimen_8dp"
+                    android:layout_marginTop="@dimen/dimen_8dp"
+                    android:layout_alignBottom="@+id/et_edit"
+                    />
+                <EditText
+                    android:id="@+id/et_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/ib_attach"
+                    android:layout_toLeftOf="@+id/btn_send"
+                    android:background="@drawable/round_corner_gray_border"
+                    android:padding="@dimen/dimen_4dp"
+                    android:layout_margin="@dimen/dimen_8dp"
+                    android:hint="New Message"
+                    android:text=""/>
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dimen_36dp"
+                    android:text="Send"
+                    android:textAllCaps="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignBottom="@+id/et_edit"
+                    android:background="@color/transparent"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

@@ -1,0 +1,47 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.main.ScanQRCodeFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp"
+            android:text="Scan"
+            android:textAllCaps="false"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:background="@drawable/round_corner_bg_yellow"
+            android:layout_marginTop="40dp"
+            />
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:layout_marginTop="40dp"
+            />
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp"
+            android:text="Submit"
+            android:textAllCaps="false"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:background="@drawable/round_corner_bg_yellow"
+            android:layout_marginTop="40dp"
+            android:visibility="gone"
+            android:clickable="false"
+            />
+    </LinearLayout>
+
+</FrameLayout>

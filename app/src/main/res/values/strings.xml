@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">HHQ</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--google key === ggolggoli815@gmail.com-->
+    <string name="sender_id" translatable="false">465251374266</string>
+    <string name="google_android_key" translatable="false">AIzaSyCkZCdS4-K5EPFGE7JYMy7O-upDJ7SNZ5A</string>
+    <string name="server_key" translatable="false">AIzaSyD7i3TKnNe1R8esR8Q3Rc_wAUzhWp1dVak</string>
+    <string name="client_id" translatable="false">535417836265-rcv1sqkn540iec13ibun3980emfg1jdb.apps.googleusercontent.com</string>
+
+    <string name="just_posted">just posted</string>
+
+    <string name="seconds_ago"> seconds ago</string>
+    <string name="minutes_ago"> minutes ago</string>
+    <string name="hours_ago"> hours ago</string>
+    <string name="days_ago"> days ago</string>
+    <string name="weeks_ago"> weeks ago</string>
+    <string name="monthes_ago"> monthes ago</string>
+    <string name="years_ago"> years ago</string>
+
+    <string name="second_ago"> second ago</string>
+    <string name="minute_ago"> minute ago</string>
+    <string name="hour_ago"> hour ago</string>
+    <string name="day_ago"> day ago</string>
+    <string name="week_ago"> week ago</string>
+    <string name="monthe_ago"> monthe ago</string>
+    <string name="year_ago"> year ago</string>
+
+    <string-array name="sort_by">
+        <item>Sort by</item>
+        <item>Date</item>
+        <item>Name</item>
+    </string-array>
+</resources>

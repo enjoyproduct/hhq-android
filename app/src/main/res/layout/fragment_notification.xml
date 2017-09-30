@@ -1,0 +1,22 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.main.NotificationFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/lightGray">
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lv_home"
+
+            android:smoothScrollbar="true">
+        </com.handmark.pulltorefresh.library.PullToRefreshListView>
+    </LinearLayout>
+
+</FrameLayout>

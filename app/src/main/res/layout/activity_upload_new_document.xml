@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_upload_new_document"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.ntsoft.ihhq.controller.home.UploadNewDocumentActivity">
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/custom_toolbar_back">
+            </include>
+
+
+        </android.support.design.widget.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/dimen_28dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/dark_gray"
+                    />
+                <!--doc name-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="@dimen/dimen_24dp"
+                        android:layout_height="@dimen/dimen_24dp"
+                        android:layout_marginLeft="@dimen/dimen_20dp"
+                        android:background="@drawable/ic_description"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_12dp"
+                        android:layout_marginRight="@dimen/dimen_12dp"
+                        >
+                        <EditText
+                            android:id="@+id/et_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="Name of Document"
+                            android:textSize="@dimen/txt_14sp"/>
+                    </RelativeLayout>
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/dark_gray"
+                    android:layout_marginLeft="40dp"
+                    />
+                <!--file ref-->
+                <LinearLayout
+                    android:id="@+id/ll_file_ref"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="@dimen/dimen_24dp"
+                        android:layout_height="@dimen/dimen_24dp"
+                        android:layout_marginLeft="@dimen/dimen_20dp"
+                        android:background="@drawable/ic_ref"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_12dp"
+                        android:layout_marginRight="@dimen/dimen_12dp"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/dimen_12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_file_ref"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="File Ref"
+                                android:textColor="@color/solid_black"
+                                android:textSize="@dimen/txt_14sp"
+                                />
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/dark_gray"
+                    android:layout_marginLeft="@dimen/dimen_20dp"
+                    />
+                <!--attach file-->
+                <LinearLayout
+                    android:id="@+id/ll_attach_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/tv_confidential"
+                    android:orientation="vertical">
+                    <!--attach file-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="@dimen/dimen_24dp"
+                            android:layout_height="@dimen/dimen_24dp"
+                            android:layout_marginLeft="@dimen/dimen_20dp"
+                            android:background="@drawable/ic_att"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dimen_12dp"
+                            android:layout_marginRight="@dimen/dimen_12dp"
+                            >
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/dimen_12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tv_filepath"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Click here to browse for a WORD or PDF document to upload"
+                                    android:textColor="@color/solid_black"
+                                    android:textSize="@dimen/txt_12sp"
+                                    />
+
+                            </LinearLayout>
+
+
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/dark_gray"
+                        android:layout_marginLeft="@dimen/dimen_20dp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <!--attach file-->
+
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="fill_parent"
+                android:layout_height="36dp"
+                android:text="Upload Now"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="70dp"
+                android:background="@drawable/round_corner_bg_yellow"
+                android:layout_marginTop="@dimen/dimen_12dp"
+                android:layout_marginBottom="@dimen/dimen_20dp"
+                android:layout_alignParentBottom="true"
+
+                />
+        </RelativeLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

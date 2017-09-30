@@ -1,0 +1,55 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightGray"
+    tools:context=".controller.home.HomeUpdateFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/rl_progress"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_weight=".65"
+            android:padding="@dimen/dimen_12dp">
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textSize="@dimen/txt_10sp"
+                android:layout_above="@+id/progressBar"/>
+            <TextView
+                android:id="@+id/tv_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="10%"
+                android:textSize="@dimen/txt_10sp"
+                android:layout_above="@+id/progressBar"/>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="3dp"
+                android:indeterminate="false"
+                android:layout_centerVertical="true"
+                android:foregroundTint="@color/yellow"
+                android:progress="0"
+                />
+
+
+        </RelativeLayout>
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/rl_progress">
+
+        </ListView>
+    </RelativeLayout>
+</FrameLayout>
