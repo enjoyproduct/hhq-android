@@ -267,19 +267,14 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                             Toast.makeText(CorrespondenceDetailActivity.this, "TimeoutError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof AuthFailureError) {
-                            //TODO
                             Toast.makeText(CorrespondenceDetailActivity.this, "AuthFailureError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
-                            //TODO
                             Toast.makeText(CorrespondenceDetailActivity.this, "ServerError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof NetworkError) {
-                            //TODO
                             Toast.makeText(CorrespondenceDetailActivity.this, "NetworkError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ParseError) {
-                            //TODO
                             Toast.makeText(CorrespondenceDetailActivity.this, "ParseError", Toast.LENGTH_LONG).show();
                         } else {
-                            //TODO
                             Toast.makeText(CorrespondenceDetailActivity.this, "UnknownError", Toast.LENGTH_LONG).show();
                         }
                     }

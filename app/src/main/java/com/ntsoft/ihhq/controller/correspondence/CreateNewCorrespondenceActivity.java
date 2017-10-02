@@ -187,19 +187,14 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Network Timeout Error", Toast.LENGTH_LONG).show();
                         } else if (error instanceof AuthFailureError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Auth Failure Error", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Server Error", Toast.LENGTH_LONG).show();
                         } else if (error instanceof NetworkError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Network Error", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ParseError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Parse Error", Toast.LENGTH_LONG).show();
                         } else {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "Unknown Error", Toast.LENGTH_LONG).show();
                         }
                     }
