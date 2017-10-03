@@ -82,8 +82,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         Utils.showProgress(this);
         Map<String, String> params = new HashMap<String, String>();
-        params.put("current_password", Utils.getFromPreference(this, Constant.PASSWORD));
-        params.put("password", etCurrentPass.getText().toString());
+        params.put("current_password", etCurrentPass.getText().toString());
+        params.put("password", etNewPass.getText().toString());
         params.put("password_confirmation", etConfirmPass.getText().toString());
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
         CustomRequest customRequest = new CustomRequest(Request.Method.POST, API.CHANGE_PASSWORD, params,

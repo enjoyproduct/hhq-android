@@ -431,8 +431,8 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/*");
-        String[] mimetypes = {"application/pdf", "application/word", "application/vnd.ms-excel", "application/doc", "application/xls"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+//        String[] mimetypes = {"application/pdf", "application/word", "application/vnd.ms-excel", "application/doc", "application/xls"};
+//        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {

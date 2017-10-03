@@ -66,7 +66,7 @@ public class HomePaymentAdapter extends BaseAdapter {
         PaymentModel paymentModel = arrPayments.get(position);
         tvPurpose.setText(paymentModel.purpose);
         tvAmount.setText(paymentModel.currency + paymentModel.amount);
-        tvDateIssued.setText(TimeUtility.timeFormatter(paymentModel.date));
+        tvDateIssued.setText(TimeUtility.timeFormatter(paymentModel.created_at));
         tvStatus.setText(paymentModel.status);
         tvRemark.setText(paymentModel.remarks);
         if (paymentModel.status.equals(Constant.arrPaymentStatus[2])) {

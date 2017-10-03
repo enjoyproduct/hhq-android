@@ -35,7 +35,7 @@ public class API {
     public static String UPDATE_PROFILE = BASE_API_URL + "users/me/setting";
     public static String ENABLE_NOTIFICATION = BASE_API_URL + "enable_notification";
     public static String CHANGE_PASSWORD = BASE_API_URL + "users/me/change_password";
-    public static String UPLOAD_NEW_DOCUMENT = BASE_API_URL + "files/";
+    public static String UPLOAD_NEW_DOCUMENT = BASE_API_URL + "files/%d/documents";
     public static String CREATE_BILL = BASE_API_URL + "billplzpayment";
     public static String CHECK_BILLING = BASE_API_URL + "requestbillplz";
     public static String UPLOAD_RECEIPT = BASE_API_URL + "bankpayment";

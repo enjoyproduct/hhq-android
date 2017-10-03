@@ -28,8 +28,9 @@ public class Constant {
     public static String[] arrDocSortBy = {"Date", "Name"};
     public static String[] arrTicketSortBy = {"Date", "Subject"};
     public static String[] arrLogisticStatus = {"Delivered", "Received", "Return"};
-    public static String[] arrPaymentStatus = {"REQUEST", "RECEIVED", "BANK DEPOSIT", "DUE NOW"};
-    public static String[] arrUserRoles = {"admin", "staff", "lawyer", "billing", "logistic", "client"};
+//    public static String[] arrPaymentStatus = {"REQUEST", "RECEIVED", "BANK DEPOSIT", "DUE NOW"};
+    public static String[] arrPaymentStatus = {"Outstanding", "Paid", "Processing", "Processing"};
+    public static String[] arrUserRoles = {"admin", "staff", "lawyer", "billing", "logistic", "client", "spectator"};
     public static String[] arrBillplzMethod = {"bank", "billplz"};
     public static String[] arrPaymentMethod = {"Upload Receipt", "Online Banking"};
 }

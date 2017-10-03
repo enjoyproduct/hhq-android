@@ -57,13 +57,13 @@ public class ChatAdapter extends BaseAdapter {
 
         tvDate.setText(messageModel.date);
         tvTime.setText(messageModel.time);
-        if (messageModel.type == 0) {
+        if (messageModel.type == 0) {//text
             tvMessage.setVisibility(View.VISIBLE);
             tvTime.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
 
             tvMessage.setText(messageModel.message);
-        } else {
+        } else {//attacj,emt
             tvMessage.setVisibility(View.GONE);
             tvTime.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);

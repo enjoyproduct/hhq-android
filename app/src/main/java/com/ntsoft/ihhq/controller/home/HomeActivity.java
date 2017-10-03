@@ -14,8 +14,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ntsoft.ihhq.R;
+import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.controller.correspondence.CreateNewCorrespondenceActivity;
 import com.ntsoft.ihhq.model.FileModel;
+import com.ntsoft.ihhq.model.Global;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -59,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 4) {
+                if (tab.getPosition() == 4 && !fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
                     ibPlus.setVisibility(View.VISIBLE);
                 } else {
                     ibPlus.setVisibility(View.GONE);

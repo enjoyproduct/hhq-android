@@ -1,5 +1,7 @@
 package com.ntsoft.ihhq.model;
 
+import com.ntsoft.ihhq.constant.Constant;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,7 +11,7 @@ import org.json.JSONObject;
 
 public class PaymentModel {
     public int payment_id, transaction_id;
-    public String file_ref, purpose, amount, currency, remarks, status, date;
+    public String file_ref, purpose, amount, currency, remarks, status, created_at;
 
     public PaymentModel(JSONObject jsonObject) {
         try {
@@ -19,12 +21,19 @@ public class PaymentModel {
             purpose = jsonObject.getString("purpose");
             amount = jsonObject.getString("amount");
             currency = jsonObject.getString("currency");
-            remarks = jsonObject.getString("remarks");
-            if (jsonObject.getString("remarks") == "null") {
+            if (jsonObject.has("remarks")) {
+                remarks = jsonObject.getString("remarks");
+            } else {
                 remarks = "";
             }
-            status = jsonObject.getString("status");
-            date = jsonObject.getString("created_at");
+
+            created_at = jsonObject.getString("created_at");
+            if (jsonObject.has("status_detail")) {
+                status = jsonObject.getString("status_detail");
+            } else {
+                status = Constant.arrPaymentStatus[0];//for test
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

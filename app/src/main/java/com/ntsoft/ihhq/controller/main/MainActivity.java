@@ -110,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        if (Global.getInstance().me.role.equals(Constant.arrUserRoles[6])) {
+            ibPlus.setVisibility(View.INVISIBLE);
+            ibPlus.setEnabled(false);
+        }
         ImageButton ibMenu = (ImageButton)toolbar.findViewById(R.id.ib_menu);
         ibMenu.setOnClickListener(new View.OnClickListener() {
             @Override

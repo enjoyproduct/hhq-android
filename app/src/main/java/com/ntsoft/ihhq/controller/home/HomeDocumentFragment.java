@@ -59,6 +59,9 @@ public class HomeDocumentFragment extends Fragment {
     ArrayList<DocumentModel> arrDocuments;
     HomeDocumentAdapter mAdapter;
     FileModel fileModel;
+
+    View view;
+
     public HomeDocumentFragment() {
         // Required empty public constructor
     }
@@ -68,12 +71,19 @@ public class HomeDocumentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home_document, container, false);
+        view = inflater.inflate(R.layout.fragment_home_document, container, false);
 
-        initVariable();
-        initUI(view);
+
         return view;
     }
+
+    @Override
+    public void onResume() {
+        initVariable();
+        initUI(view);
+        super.onResume();
+    }
+
     private void initVariable() {
         mActivity = getActivity();
         arrDocuments = new ArrayList<>();
@@ -116,7 +126,7 @@ public class HomeDocumentFragment extends Fragment {
                 downloadFile(position - 1);
             }
         });
-        if (Global.getInstance().me.role.equals(Constant.arrUserRoles[5])) {
+        if (Global.getInstance().me.role.equals(Constant.arrUserRoles[5]) || fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
             btnUpload.setVisibility(View.INVISIBLE);
             btnUpload.setEnabled(false);
         } else {

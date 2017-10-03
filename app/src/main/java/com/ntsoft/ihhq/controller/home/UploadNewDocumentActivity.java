@@ -107,8 +107,13 @@ public class UploadNewDocumentActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/*");
-        String[] mimetypes = {"application/pdf", "application/word", "application/vnd.ms-excel", "application/doc", "application/xls"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+//        String[] mimetypes = {"application/msword"
+//                , "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+//                "application/xls"
+//                , "application/vnd.ms-excel"
+//                , "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+//                ,"application/pdf"};
+//        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
@@ -156,8 +161,9 @@ public class UploadNewDocumentActivity extends AppCompatActivity {
         }
 
         Utils.showProgress(this);
+        final String endPoint = String.format(API.UPLOAD_NEW_DOCUMENT, fileModel.file_id);
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(API.UPLOAD_NEW_DOCUMENT,
+        CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(endPoint,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

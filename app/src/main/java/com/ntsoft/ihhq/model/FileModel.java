@@ -28,6 +28,7 @@ public class FileModel implements Serializable{
     public String file_ref, project_name, subject_matter, subject_description, contact_name, contact
             , contact_email, introducer, percent, billplz_collection_id, currency
             , outstanding_address, mailing_address;
+    public String assigned_role;
     public List<String> tags = new ArrayList<>();
     public  CaseModel cases = new CaseModel();
 
@@ -57,6 +58,8 @@ public class FileModel implements Serializable{
             String tagString = jsonObject.getString("tags");
             String[] tagArray = tagString.split(",");
             tags = Arrays.asList(tagArray);
+
+            assigned_role = jsonObject.getString("role");
         } catch (JSONException e) {
             e.printStackTrace();
         }

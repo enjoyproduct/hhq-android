@@ -1,5 +1,6 @@
 package com.ntsoft.ihhq.controller.correspondence;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -315,6 +316,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+    @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

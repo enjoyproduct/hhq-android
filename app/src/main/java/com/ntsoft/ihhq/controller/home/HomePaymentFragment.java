@@ -82,6 +82,7 @@ public class HomePaymentFragment extends Fragment {
     boolean isBillCreated;
 
     String avatarPath;
+    String filePath;
     private static final int from_gallery = 1;
     private static final int from_camera = 2;
     private static final String JPEG_FILE_PREFIX = "iHHQ_";
@@ -166,6 +167,55 @@ public class HomePaymentFragment extends Fragment {
         builder.setCancelable(true);
         builder.show();
     }
+    void selectReceiptType() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle("");
+        builder.setMessage("Do you want to upload receipt document or photo?");
+        builder.setCancelable(true);
+        builder.setPositiveButton( "Document",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        browseFile();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNegativeButton( "Photo",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        pickReceiptImage();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNeutralButton( "Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                avatarPath = "";
+                dialog.cancel();
+
+            }
+        });
+//        dialog.setCancelable(true);
+//        dialog.setCanceledOnTouchOutside(false);
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+    private static final int FILE_SELECT_CODE = 0;
+    void browseFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select a File to Upload"),
+                    FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(mActivity, "Please install a File Manager.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
     void pickReceiptImage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle("Upload Receipt");
@@ -232,6 +282,24 @@ public class HomePaymentFragment extends Fragment {
                 }
                 break;
             }
+            case FILE_SELECT_CODE:
+                if (resultCode == mActivity.RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+                    Log.d("HomePaymentFragment", "File Uri: " + uri.toString());
+                    // Get the path
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        filePath = FileUtility.getPath(mActivity, uri);
+                    }
+                    if (filePath != null) {
+
+                    } else {
+                        filePath = "";
+                        Utils.showOKDialog(mActivity, "Cannot select this file");
+                    }
+                    Log.d("HomePaymentFragment", "File Path: " + filePath);
+                }
+                break;
         }
     }
     void doUploadReceipt() {
@@ -299,7 +367,8 @@ public class HomePaymentFragment extends Fragment {
         if (avatarPath.length() > 0) {
             customMultipartRequest
                     .addImagePart("receipt", avatarPath);
-        } else {
+        } else if (filePath.length() > 0){
+            customMultipartRequest.addDocumentPart("receipt", filePath);
         }
 
         requestQueue.add(customMultipartRequest);

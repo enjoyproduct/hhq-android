@@ -46,6 +46,8 @@ public class HomeCorrespondenceFragment extends Fragment {
     ArrayList<CorrespondenceModel> arrCorrespondences;
     FileModel fileModel;
     String api;
+    View view;
+
     public HomeCorrespondenceFragment() {
         // Required empty public constructor
     }
@@ -55,13 +57,19 @@ public class HomeCorrespondenceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home_correspondence, container, false);
+        view = inflater.inflate(R.layout.fragment_home_correspondence, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
         initVariable();
         initUI(view);
         getCorrespondences();
-        return view;
+        super.onResume();
     }
+
     private void initVariable() {
         mActivity = getActivity();
         arrCorrespondences = new ArrayList<>();
