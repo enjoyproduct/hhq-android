@@ -147,7 +147,7 @@ public class HomePaymentFragment extends Fragment {
         builder.setPositiveButton( Constant.arrPaymentMethod[0],
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        pickReceiptImage();
+                        selectReceiptType();
                         dialog.cancel();
                     }
                 });
@@ -292,7 +292,7 @@ public class HomePaymentFragment extends Fragment {
                         filePath = FileUtility.getPath(mActivity, uri);
                     }
                     if (filePath != null) {
-
+                        doUploadReceipt();
                     } else {
                         filePath = "";
                         Utils.showOKDialog(mActivity, "Cannot select this file");
@@ -308,7 +308,7 @@ public class HomePaymentFragment extends Fragment {
             return;
         }
 
-        if (avatarPath.isEmpty()) {
+        if (avatarPath.isEmpty() && filePath.isEmpty()) {
             return;
         }
         Utils.showProgress(mActivity);

@@ -48,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, CreateNewCorrespondenceActivity.class);
                 intent.putExtra("file_ref", fileModel.file_ref);
                 intent.putExtra("category_id", fileModel.category_id);
+                intent.putExtra("fromFile", true);
                 startActivity(intent);
             }
         });

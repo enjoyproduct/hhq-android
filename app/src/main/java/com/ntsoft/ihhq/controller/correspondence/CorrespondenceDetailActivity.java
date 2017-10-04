@@ -184,11 +184,11 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                                     JSONArray arrAttachments = msgObj.getJSONArray("attachments");
                                     for (int k = 0; k < arrAttachments.length(); k ++) {
                                         JSONObject attchObj = arrAttachments.getJSONObject(k);
-
-                                        messageModel.attachmentName = attchObj.getString("name");
-                                        messageModel.attachmentPath = attchObj.getString("path");
-                                        messageModel.type = 1;
-                                        arrMessages.add(messageModel);
+                                        MessageModel messageModel1 = new MessageModel(jsonObject);
+                                        messageModel1.attachmentName = attchObj.getString("name");
+                                        messageModel1.attachmentPath = attchObj.getString("path");
+                                        messageModel1.type = 1;
+                                        arrMessages.add(messageModel1);
                                     }
                                 }
                             }

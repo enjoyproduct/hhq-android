@@ -147,7 +147,7 @@ public class ScanQRCodeFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Utils.hideProgress();
-                        Utils.showToast(mActivity, "qr code is not match");
+                        Utils.showToast(mActivity, error.toString());
 
                     }
                 }){

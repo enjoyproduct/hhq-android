@@ -1,5 +1,7 @@
 package com.ntsoft.ihhq.model;
 
+import com.ntsoft.ihhq.constant.Constant;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +43,12 @@ public class FileModel implements Serializable{
             created_by = jsonObject.getInt("created_by");
             updated_by = jsonObject.getInt("updated_by");
             closed_by = jsonObject.getInt("closed_by");
+            if (jsonObject.has("role")) {
+                assigned_role = jsonObject.getString("role");
+            } else {
+                assigned_role = Constant.arrUserRoles[0];
+            }
+
 
             file_ref = jsonObject.getString("file_ref");
             project_name = jsonObject.getString("project_name");
@@ -59,7 +67,7 @@ public class FileModel implements Serializable{
             String[] tagArray = tagString.split(",");
             tags = Arrays.asList(tagArray);
 
-            assigned_role = jsonObject.getString("role");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

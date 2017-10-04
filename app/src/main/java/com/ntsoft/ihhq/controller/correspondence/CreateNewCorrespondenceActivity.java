@@ -60,6 +60,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
     String fileRef = "";
     int selectedDepartmentID = -1;
     String message, subject;
+    boolean comeFromFile = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,9 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         arrFileRefs = new ArrayList<>();
         arrAttachments = new ArrayList<>();
         arrDepartmentIDs = new ArrayList<>();
+        if (getIntent().hasExtra("fromFile")) {
+            comeFromFile = getIntent().getBooleanExtra("fromFile", false);
+        }
         if (getIntent().hasExtra("file_ref")) {
             fileRef = getIntent().getStringExtra("file_ref");
         } else {
@@ -103,7 +107,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         llDepartment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedDepartmentID < 0) {
+                if (!comeFromFile) {
                     showDepartmentDlg();
                 }
             }
@@ -112,7 +116,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         llFileRef.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedDepartmentID < 0) {
+                if (!comeFromFile) {
                     showFileRefDlg();
                 }
             }
@@ -151,6 +155,10 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                 }
                 if (selectedDepartmentID < 0) {
                     Utils.showOKDialog(CreateNewCorrespondenceActivity.this, "Please select department");
+                    return;
+                }
+                if (fileRef.isEmpty()) {
+                    Utils.showOKDialog(CreateNewCorrespondenceActivity.this, "Please select fileRef");
                     return;
                 }
                 submitCorrespondence();
@@ -314,13 +322,13 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
             customMultipartRequest.addStringPart("file_ref", fileRef);
         }
         for (String path: arrAttachments) {
-            customMultipartRequest.addDocumentPart("attachments[]", path);
+            customMultipartRequest.addDocumentPart("attachments", path);
         }
 
         requestQueue.add(customMultipartRequest);
     }
 
-    public void showDepartmentDlg(){
+    public void showDepartmentDlg() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setTitle("Choose Department");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrDepartments); //selected item will look like a spinner set from XML
