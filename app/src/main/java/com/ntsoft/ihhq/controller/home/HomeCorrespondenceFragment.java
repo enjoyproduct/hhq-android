@@ -84,6 +84,7 @@ public class HomeCorrespondenceFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(mActivity, CorrespondenceDetailActivity.class);
                 intent.putExtra("correspondence", arrCorrespondences.get(position));
+                intent.putExtra("fileModel", fileModel);
                 startActivity(intent);
             }
         });

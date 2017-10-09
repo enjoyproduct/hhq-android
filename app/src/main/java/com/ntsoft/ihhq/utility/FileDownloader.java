@@ -120,9 +120,10 @@ public class FileDownloader {
 
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
+                return null;
             }
 
-            return null;
+            return f_url[0];
         }
 
         /**

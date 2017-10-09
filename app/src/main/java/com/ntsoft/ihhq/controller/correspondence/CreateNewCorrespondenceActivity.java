@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,15 +37,31 @@ import com.ntsoft.ihhq.constant.API;
 import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.model.Global;
 import com.ntsoft.ihhq.utility.FileUtility;
+import com.ntsoft.ihhq.utility.FileUtils;
 import com.ntsoft.ihhq.utility.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateNewCorrespondenceActivity extends AppCompatActivity {
 
@@ -143,6 +160,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
 
         btnSubmit = (Button)findViewById(R.id.btn_submit);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 if (etSubjectMatter.getText().toString().isEmpty()) {
@@ -162,6 +180,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                     return;
                 }
                 submitCorrespondence();
+//                submit();
             }
         });
     }
@@ -290,19 +309,14 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "TimeoutError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof AuthFailureError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "AuthFailureError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "ServerError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof NetworkError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "NetworkError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ParseError) {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "ParseError", Toast.LENGTH_LONG).show();
                         } else {
-                            //TODO
                             Toast.makeText(CreateNewCorrespondenceActivity.this, "UnknownError", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -321,12 +335,107 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         if (!fileRef.isEmpty()) {
             customMultipartRequest.addStringPart("file_ref", fileRef);
         }
-        for (String path: arrAttachments) {
-            customMultipartRequest.addDocumentPart("attachments", path);
+        int entitycount = customMultipartRequest.getEntityCount();
+        for (int i = 0; i < arrAttachments.size(); i ++) {
+            customMultipartRequest.addDocumentPart("attachments", arrAttachments.get(i));
         }
-
+        entitycount = customMultipartRequest.getEntityCount();
         requestQueue.add(customMultipartRequest);
+
+
     }
+
+//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    void  submit() {
+//        if (!Utils.haveNetworkConnection(this)) {
+//            Utils.showToast(this, "No internet connection");
+//            return;
+//        }
+//
+//        Utils.showProgress(this);
+//        // create list of file parts (photo, video, ...)
+//        List<MultipartBody.Part> parts = new ArrayList<>();
+//        for (int i = 0; i < arrAttachments.size(); i ++) {
+//            Uri uri = Uri.parse(arrAttachments.get(i));
+//            parts.add(prepareFilePart("attachments", uri));
+//        }
+//        parts.add(prepareStringPart("department_id", String.valueOf(selectedDepartmentID)));
+//        parts.add(prepareStringPart("subject", etSubjectMatter.getText().toString()));
+//        parts.add(prepareStringPart("message", etMessage.getText().toString()));
+//        parts.add(prepareStringPart("file_ref", fileRef));
+//
+//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+//        httpClient.addInterceptor(new Interceptor() {
+//            @Override
+//            public okhttp3.Response intercept(Chain chain) throws IOException {
+//                Request original = chain.request();
+//
+//                Request request = original.newBuilder()
+//                        .header("Authorization", "Bearer " + Global.getInstance().me.token)
+//                        .method(original.method(), original.body())
+//                        .build();
+//
+//                return chain.proceed(request);
+//            }
+//        });
+//        OkHttpClient client = httpClient.build();
+//
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(API.CREAT_NEW_TICKET)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .client(client)
+//                .build();
+//
+//// ... possibly add more parts here
+//
+//// add the description part within the multipart request
+//        RequestBody description = createPartFromString("hello, this is description speaking");
+//
+//// create upload service client
+//        FileUploadService service = retrofit.create(FileUploadService.class);
+//
+//// finally, execute the request
+//        Call<ResponseBody> call = service.uploadMultipleFilesDynamic(description, parts);
+//
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+//                Utils.hideProgress();
+//                Log.v("Upload", "success");
+//                Utils.showToast(CreateNewCorrespondenceActivity.this, "Created successfully");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Utils.hideProgress();
+//                Log.e("Upload error:", t.getMessage());
+//                Utils.showToast(CreateNewCorrespondenceActivity.this, t.getMessage());
+//
+//            }
+//        });
+//    }
+//    @NonNull
+//    private RequestBody createPartFromString(String descriptionString) {
+//        return RequestBody.create(
+//                okhttp3.MultipartBody.FORM, descriptionString);
+//    }
+//
+//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    @NonNull
+//    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
+//        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+//        // use the FileUtils to get the actual file by uri
+//        File file = new File(fileUri.toString());
+//
+//        // create RequestBody instance from file
+//        RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(fileUri)), file);
+//
+//        // MultipartBody.Part is used to send also the actual file name
+//        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+//    }
+//    private MultipartBody.Part prepareStringPart(String partName, String value) {
+//        return MultipartBody.Part.createFormData(partName, value);
+//    }
 
     public void showDepartmentDlg() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);

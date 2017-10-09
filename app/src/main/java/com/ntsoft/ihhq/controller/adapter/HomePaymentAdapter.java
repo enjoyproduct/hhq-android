@@ -69,10 +69,15 @@ public class HomePaymentAdapter extends BaseAdapter {
         tvDateIssued.setText(TimeUtility.timeFormatter(paymentModel.created_at));
         tvStatus.setText(paymentModel.status);
         tvRemark.setText(paymentModel.remarks);
-        if (paymentModel.status.equals(Constant.arrPaymentStatus[2])) {
+        if (paymentModel.status.equals(Constant.arrPaymentStatus[0])) {
             btnViewInvoice.setVisibility(View.VISIBLE);
+            btnViewInvoice.setText("View Invoice");
+        } else if (paymentModel.status.equals(Constant.arrPaymentStatus[2])) {
+            btnViewInvoice.setVisibility(View.VISIBLE);
+            btnViewInvoice.setText("View Receipt");
         } else {
-            btnViewInvoice.setVisibility(View.GONE);
+            btnViewInvoice.setVisibility(View.VISIBLE);
+            btnViewInvoice.setText("View Receipt");
         }
         btnViewInvoice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,8 +89,18 @@ public class HomePaymentAdapter extends BaseAdapter {
         return view;
     }
     void downloadFile(int position) {
-        final String url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
-        String fileName = String.valueOf(arrPayments.get(position).payment_id) + "_invoice.pdf";
+        String url = "";
+        String fileName = "";
+        if (arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
+            url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
+            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_invoice.pdf";
+        } else if (arrPayments.get(position).status.equals(Constant.arrPaymentStatus[2])) {
+            url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
+            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_receipt.pdf";
+        } else {
+            url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
+            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_receipt.pdf";
+        }
         FileDownloader.downloadFile(mActivity, url,fileName, new FileDownloadCompleteListener() {
             @Override
             public void onComplete(String filePath) {

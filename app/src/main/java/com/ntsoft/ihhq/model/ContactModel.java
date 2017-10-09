@@ -19,6 +19,9 @@ public class ContactModel {
             country_id = jsonObject.getInt("country_id");
             email = jsonObject.getString("email");
             mobile = jsonObject.getString("mobile");
+            if (mobile.substring(0,1).equals("0")) {
+                mobile = mobile.substring(1);
+            }
             name = jsonObject.getString("name");
             role = jsonObject.getString("role");
         } catch (JSONException e) {

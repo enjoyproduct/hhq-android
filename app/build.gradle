@@ -42,4 +42,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.daimajia.androidanimations:library:1.0.3@aar'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 }

@@ -30,7 +30,9 @@ public class MultipartEntity extends AbstractHttpEntity implements Cloneable {
     public void addPart(Part part) {
         parts.add(part);
     }
-    
+    public int getPartCount() {
+        return this.parts.size();
+    }
     public boolean isRepeatable() {
         return true;
     }

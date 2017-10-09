@@ -39,6 +39,9 @@ public class CustomMultipartRequest extends Request<JSONObject> {
     private Response.Listener mListener;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////start
+    public int getEntityCount() {
+        return this.multipartEntity.getPartCount();
+    }
     public CustomMultipartRequest(String url, Response.Listener<JSONObject> listener,
                                   Response.ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
@@ -64,8 +67,11 @@ public class CustomMultipartRequest extends Request<JSONObject> {
         return this;
     }
     public CustomMultipartRequest addDocumentPart(String key, String filePath) {
-        FilePart filePart = new FilePart(key, new File(filePath), filePath.substring(filePath.lastIndexOf("/") + 1), "application/*");
+//        FilePart filePart = new FilePart(key, new File(filePath), filePath.substring(filePath.lastIndexOf("/") + 1), "application/*");
+
+        FilePart filePart = new FilePart(key, new File(filePath), null, null);
         multipartEntity.addPart(filePart);
+
         return this;
     }
     @Override

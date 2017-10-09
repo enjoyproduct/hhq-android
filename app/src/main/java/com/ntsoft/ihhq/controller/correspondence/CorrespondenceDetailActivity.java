@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.ntsoft.ihhq.R;
 import com.ntsoft.ihhq.constant.API;
+import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.controller.adapter.ChatAdapter;
 import com.ntsoft.ihhq.controller.home.UploadNewDocumentActivity;
 import com.ntsoft.ihhq.model.CorrespondenceModel;
+import com.ntsoft.ihhq.model.FileModel;
 import com.ntsoft.ihhq.model.Global;
 import com.ntsoft.ihhq.model.MessageModel;
 import com.ntsoft.ihhq.utility.FileUtility;
@@ -53,6 +56,7 @@ import java.util.Map;
 public class CorrespondenceDetailActivity extends AppCompatActivity {
     private static final String TAG = "CorrespondenceDetailActivity";
 
+    RelativeLayout rlEditorContainer;
     CorrespondenceModel correspondenceModel;
     String urlGetMessage, urlPostMessage;
     ArrayList<MessageModel> arrMessages;
@@ -63,6 +67,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
     ImageButton ibAttach;
     EditText etMessage;
     String filePath;
+    FileModel fileModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,11 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         } else {
             urlGetMessage = "";
             urlPostMessage = "";
+        }
+        if (getIntent().hasExtra("fileModel")) {
+            fileModel = (FileModel) getIntent().getSerializableExtra("fileModel");
+        } else {
+            fileModel = null;
         }
         arrMessages = new ArrayList<>();
         filePath = "";
@@ -138,6 +149,15 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                 filePath = "";
             }
         });
+        rlEditorContainer = (RelativeLayout) findViewById(R.id.rl_editor_container);
+        if (fileModel != null) {
+            if (fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
+                rlEditorContainer.setVisibility(View.GONE);
+            } else {
+                rlEditorContainer.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
     private void getMessages() {
         if (!Utils.haveNetworkConnection(this)) {
