@@ -120,8 +120,8 @@
                     />
 
             </LinearLayout>
-            <Button
-                android:id="@+id/btn_view_invoice"
+            <TextView
+                android:id="@+id/tv_view_invoice"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dimen_32dp"
                 android:background="@color/transparent"

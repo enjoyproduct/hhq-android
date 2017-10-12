@@ -1,10 +1,18 @@
 [
     {
-        "merged": "/Users/admin/Documents/@project/42.iHHQ/Code/Android/iHHQ/pullToRefreshLibrary/build/intermediates/res/merged/androidTest/debug/layout/pull_to_refresh_header_vertical.xml",
-        "source": "/Users/admin/Documents/@project/42.iHHQ/Code/Android/iHHQ/pullToRefreshLibrary/build/intermediates/bundles/debug/res/layout/pull_to_refresh_header_vertical.xml"
+        "merged": "F:\\Users\\admin\\Documents\\@project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\pull_to_refresh_header_vertical.xml",
+        "source": "F:\\Users\\admin\\Documents\\@project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\bundles\\debug\\res\\layout\\pull_to_refresh_header_vertical.xml"
     },
     {
-        "merged": "/Users/admin/Documents/@project/42.iHHQ/Code/Android/iHHQ/pullToRefreshLibrary/build/intermediates/res/merged/androidTest/debug/layout/pull_to_refresh_header_horizontal.xml",
-        "source": "/Users/admin/Documents/@project/42.iHHQ/Code/Android/iHHQ/pullToRefreshLibrary/build/intermediates/bundles/debug/res/layout/pull_to_refresh_header_horizontal.xml"
+        "merged": "F:\\Users\\admin\\Documents\\@project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\pull_to_refresh_header_horizontal.xml",
+        "source": "F:\\Users\\admin\\Documents\\@project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\bundles\\debug\\res\\layout\\pull_to_refresh_header_horizontal.xml"
+    },
+    {
+        "merged": "F:\\project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\pull_to_refresh_header_vertical.xml",
+        "source": "F:\\project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\bundles\\debug\\res\\layout\\pull_to_refresh_header_vertical.xml"
+    },
+    {
+        "merged": "F:\\project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\pull_to_refresh_header_horizontal.xml",
+        "source": "F:\\project\\42.iHHQ\\Code\\Android\\iHHQ\\pullToRefreshLibrary\\build\\intermediates\\bundles\\debug\\res\\layout\\pull_to_refresh_header_horizontal.xml"
     }
 ]

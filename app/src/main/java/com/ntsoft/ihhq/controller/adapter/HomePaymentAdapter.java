@@ -61,7 +61,7 @@ public class HomePaymentAdapter extends BaseAdapter {
         TextView tvDateIssued = (TextView)view.findViewById(R.id.tv_date_issued);
         TextView tvRemark = (TextView)view.findViewById(R.id.tv_remark);
         TextView tvStatus = (TextView)view.findViewById(R.id.tv_status);
-        Button btnViewInvoice = (Button)view.findViewById(R.id.btn_view_invoice);
+        TextView tvViewInvoice = (TextView)view.findViewById(R.id.tv_view_invoice);
 
         PaymentModel paymentModel = arrPayments.get(position);
         tvPurpose.setText(paymentModel.purpose);
@@ -70,16 +70,16 @@ public class HomePaymentAdapter extends BaseAdapter {
         tvStatus.setText(paymentModel.status);
         tvRemark.setText(paymentModel.remarks);
         if (paymentModel.status.equals(Constant.arrPaymentStatus[0])) {
-            btnViewInvoice.setVisibility(View.VISIBLE);
-            btnViewInvoice.setText("View Invoice");
+            tvViewInvoice.setVisibility(View.VISIBLE);
+            tvViewInvoice.setText("View Invoice");
         } else if (paymentModel.status.equals(Constant.arrPaymentStatus[2])) {
-            btnViewInvoice.setVisibility(View.VISIBLE);
-            btnViewInvoice.setText("View Receipt");
+            tvViewInvoice.setVisibility(View.VISIBLE);
+            tvViewInvoice.setText("View Slip");
         } else {
-            btnViewInvoice.setVisibility(View.VISIBLE);
-            btnViewInvoice.setText("View Receipt");
+            tvViewInvoice.setVisibility(View.VISIBLE);
+            tvViewInvoice.setText("View Receipt");
         }
-        btnViewInvoice.setOnClickListener(new View.OnClickListener() {
+        tvViewInvoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 downloadFile(position);

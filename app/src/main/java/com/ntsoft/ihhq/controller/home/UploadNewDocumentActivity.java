@@ -213,8 +213,7 @@ public class UploadNewDocumentActivity extends AppCompatActivity {
                 .addStringPart("file_ref", fileModel.file_ref);
 
         if (filePath.length() > 0) {
-            customMultipartRequest
-                    .addDocumentPart("file", filePath);
+            customMultipartRequest.addDocumentPart("file", filePath);
         } else {
         }
 

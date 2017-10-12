@@ -67,9 +67,10 @@ public class CustomMultipartRequest extends Request<JSONObject> {
         return this;
     }
     public CustomMultipartRequest addDocumentPart(String key, String filePath) {
-//        FilePart filePart = new FilePart(key, new File(filePath), filePath.substring(filePath.lastIndexOf("/") + 1), "application/*");
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        FilePart filePart = new FilePart(key, new File(filePath), fileName, "application/*");
 
-        FilePart filePart = new FilePart(key, new File(filePath), null, null);
+//        FilePart filePart = new FilePart(key, new File(filePath), null, null);
         multipartEntity.addPart(filePart);
 
         return this;
