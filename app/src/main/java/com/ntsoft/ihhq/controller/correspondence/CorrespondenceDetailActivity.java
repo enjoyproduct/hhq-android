@@ -196,7 +196,9 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                                 } else {
                                     messageModel.isIncoming = true;
                                 }
-                                arrMessages.add(messageModel);
+                                if (!messageModel.message.isEmpty()) {
+                                    arrMessages.add(messageModel);
+                                }
                                 //if has attachment
                                 String str = jsonObject.getString("message");
                                 JSONObject msgObj = new JSONObject(str);
@@ -309,7 +311,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         };
         customMultipartRequest.addStringPart("message", message);
         if (filePath.length() > 0) {
-            customMultipartRequest.addDocumentPart("file", filePath);
+            customMultipartRequest.addDocumentPart("attachment", filePath);
         } else {
         }
         RequestQueue requestQueue = Volley.newRequestQueue(this);

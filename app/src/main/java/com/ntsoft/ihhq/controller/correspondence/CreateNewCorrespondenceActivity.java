@@ -51,17 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateNewCorrespondenceActivity extends AppCompatActivity {
 
@@ -78,6 +67,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
     int selectedDepartmentID = -1;
     String message, subject;
     boolean comeFromFile = false;
+    int ticketID = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,8 +285,13 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                         Utils.hideProgress();
                         requestQueue.getCache().remove(API.CREAT_NEW_TICKET);
                         try {
-                            Utils.showToast(CreateNewCorrespondenceActivity.this, "Created successfully");
-                            finish();
+                            ticketID = response.getInt("ticket_id");
+                            if (arrAttachments.size() > 0) {
+                                uploadFile();
+                            } else {
+                                Utils.showToast(CreateNewCorrespondenceActivity.this, "Created successfully");
+                                finish();
+                            }
                         }catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -335,107 +330,79 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         if (!fileRef.isEmpty()) {
             customMultipartRequest.addStringPart("file_ref", fileRef);
         }
-        int entitycount = customMultipartRequest.getEntityCount();
-        for (int i = 0; i < arrAttachments.size(); i ++) {
-            customMultipartRequest.addDocumentPart("attachments", arrAttachments.get(i));
-        }
-        entitycount = customMultipartRequest.getEntityCount();
+//        int entitycount = customMultipartRequest.getEntityCount();
+//        for (int i = 0; i < arrAttachments.size(); i ++) {
+//            customMultipartRequest.addDocumentPart("attachments", arrAttachments.get(i));
+//        }
+//        entitycount = customMultipartRequest.getEntityCount();
         requestQueue.add(customMultipartRequest);
 
 
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//    void  submit() {
-//        if (!Utils.haveNetworkConnection(this)) {
-//            Utils.showToast(this, "No internet connection");
-//            return;
-//        }
-//
-//        Utils.showProgress(this);
-//        // create list of file parts (photo, video, ...)
-//        List<MultipartBody.Part> parts = new ArrayList<>();
-//        for (int i = 0; i < arrAttachments.size(); i ++) {
-//            Uri uri = Uri.parse(arrAttachments.get(i));
-//            parts.add(prepareFilePart("attachments", uri));
-//        }
-//        parts.add(prepareStringPart("department_id", String.valueOf(selectedDepartmentID)));
-//        parts.add(prepareStringPart("subject", etSubjectMatter.getText().toString()));
-//        parts.add(prepareStringPart("message", etMessage.getText().toString()));
-//        parts.add(prepareStringPart("file_ref", fileRef));
-//
-//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-//        httpClient.addInterceptor(new Interceptor() {
-//            @Override
-//            public okhttp3.Response intercept(Chain chain) throws IOException {
-//                Request original = chain.request();
-//
-//                Request request = original.newBuilder()
-//                        .header("Authorization", "Bearer " + Global.getInstance().me.token)
-//                        .method(original.method(), original.body())
-//                        .build();
-//
-//                return chain.proceed(request);
-//            }
-//        });
-//        OkHttpClient client = httpClient.build();
-//
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(API.CREAT_NEW_TICKET)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .client(client)
-//                .build();
-//
-//// ... possibly add more parts here
-//
-//// add the description part within the multipart request
-//        RequestBody description = createPartFromString("hello, this is description speaking");
-//
-//// create upload service client
-//        FileUploadService service = retrofit.create(FileUploadService.class);
-//
-//// finally, execute the request
-//        Call<ResponseBody> call = service.uploadMultipleFilesDynamic(description, parts);
-//
-//        call.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-//                Utils.hideProgress();
-//                Log.v("Upload", "success");
-//                Utils.showToast(CreateNewCorrespondenceActivity.this, "Created successfully");
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Utils.hideProgress();
-//                Log.e("Upload error:", t.getMessage());
-//                Utils.showToast(CreateNewCorrespondenceActivity.this, t.getMessage());
-//
-//            }
-//        });
-//    }
-//    @NonNull
-//    private RequestBody createPartFromString(String descriptionString) {
-//        return RequestBody.create(
-//                okhttp3.MultipartBody.FORM, descriptionString);
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//    @NonNull
-//    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-//        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
-//        // use the FileUtils to get the actual file by uri
-//        File file = new File(fileUri.toString());
-//
-//        // create RequestBody instance from file
-//        RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(fileUri)), file);
-//
-//        // MultipartBody.Part is used to send also the actual file name
-//        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-//    }
-//    private MultipartBody.Part prepareStringPart(String partName, String value) {
-//        return MultipartBody.Part.createFormData(partName, value);
-//    }
+    private void uploadFile() {
+        if (!Utils.haveNetworkConnection(this)) {
+            Utils.showToast(this, "No internet connection");
+            return;
+        }
+        if (ticketID == 0) {
+            Utils.showToast(this, "Correspondence is not created.");
+            return;
+        }
+        if (arrAttachments.size() == 0) {
+            return;
+        }
+        Utils.showProgress(this);
+        String urlPostMessage = API.POST_TICKET_MESSAGE + String.valueOf(ticketID) + "/messages";
+        CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(urlPostMessage,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Utils.hideProgress();
+                        if (arrAttachments.size() == 0) {
+                            Utils.showToast(CreateNewCorrespondenceActivity.this, "Created successfully");
+                            finish();
+                        } else {
+                            uploadFile();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Utils.hideProgress();
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "TimeoutError", Toast.LENGTH_LONG).show();
+                        } else if (error instanceof AuthFailureError) {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "AuthFailureError", Toast.LENGTH_LONG).show();
+                        } else if (error instanceof ServerError) {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "ServerError", Toast.LENGTH_LONG).show();
+                        } else if (error instanceof NetworkError) {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "NetworkError", Toast.LENGTH_LONG).show();
+                        } else if (error instanceof ParseError) {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "ParseError", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(CreateNewCorrespondenceActivity.this, "UnknownError", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + Global.getInstance().me.token);
+                return header;
+            }
+        };
+
+        String filePath = arrAttachments.get(0);
+        arrAttachments.remove(0);
+        if (filePath.length() > 0) {
+            customMultipartRequest.addDocumentPart("attachment", filePath);
+        } else {
+        }
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(customMultipartRequest);
+    }
 
     public void showDepartmentDlg() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
