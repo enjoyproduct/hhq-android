@@ -134,7 +134,9 @@ public class HomePaymentFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 isBillCreated = false;
-                if (Global.getInstance().me.role.equals(Constant.arrUserRoles[5]) && arrPayments.get(position ).status.equals(Constant.arrPaymentStatus[0])) {
+                if (Global.getInstance().me.role.equals(Constant.arrUserRoles[5])
+                        && arrPayments.get(position ).status.equals(Constant.arrPaymentStatus[0])
+                        && !fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
                     index = position ;
                     selectManualOrOnline();
                 }

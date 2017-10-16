@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,13 +43,17 @@ import com.ntsoft.ihhq.model.CorrespondenceModel;
 import com.ntsoft.ihhq.model.FileModel;
 import com.ntsoft.ihhq.model.Global;
 import com.ntsoft.ihhq.model.MessageModel;
+import com.ntsoft.ihhq.utility.FileDownloadCompleteListener;
+import com.ntsoft.ihhq.utility.FileDownloader;
 import com.ntsoft.ihhq.utility.FileUtility;
+import com.ntsoft.ihhq.utility.StringUtility;
 import com.ntsoft.ihhq.utility.TimeUtility;
 import com.ntsoft.ihhq.utility.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,7 +129,18 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         mAdapter = new ChatAdapter(this, arrMessages);
         listView.setAdapter(mAdapter);
         listView.smoothScrollToPosition(arrMessages.size() - 1);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (arrMessages.get(position - 1).type == 1) {
+                    MessageModel msg = arrMessages.get(position - 1);
+                    String endPoint = String.format(API.DOWNLOAD_TICKET_FILE, msg.attachmentPath, msg.attachmentName);
+                    downloadFile(endPoint, msg.attachmentName);
+                } else {
 
+                }
+            }
+        });
         etMessage = (EditText)findViewById(R.id.et_edit);
         ibAttach = (ImageButton)findViewById(R.id.ib_attach);
         ibAttach.setOnClickListener(new View.OnClickListener() {
@@ -158,6 +174,26 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
             }
         }
 
+    }
+    void downloadFile(String endpoint, final String fileName) {
+        FileDownloader.downloadFile(this, endpoint, fileName, new FileDownloadCompleteListener() {
+            @Override
+            public void onComplete(String filePath) {
+//                Toast.makeText(mActivity, filePath, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                File file = new File(filePath);
+
+                if (fileName.contains(".pdf")) {
+                    intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
+                } else if (fileName.contains(".doc") || filePath.contains(".word")) {
+                    intent.setDataAndType( Uri.fromFile( file ), "application/msword");
+                } else {
+                    intent.setDataAndType( Uri.fromFile( file ), "application/vnd.ms-excel" );
+                }
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            }
+        });
     }
     private void getMessages() {
         if (!Utils.haveNetworkConnection(this)) {
