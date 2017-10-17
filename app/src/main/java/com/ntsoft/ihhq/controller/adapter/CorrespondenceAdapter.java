@@ -61,7 +61,7 @@ public class CorrespondenceAdapter extends BaseAdapter {
         TextView tvSubject = (TextView)view.findViewById(R.id.tv_subject);
         TextView tvTime = (TextView)view.findViewById(R.id.tv_date);
         CorrespondenceModel correspondenceModel = arrCorrespondences.get(position);
-        tvName.setText(correspondenceModel.client_name + "(" + correspondenceModel.category + ")");
+        tvName.setText(correspondenceModel.client_name + " (" + correspondenceModel.category + ")");
         tvSubject.setText(correspondenceModel.subject);
         tvTime.setText(TimeUtility.timeFormatter(correspondenceModel.created_at));
 

@@ -165,10 +165,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                     Utils.showOKDialog(CreateNewCorrespondenceActivity.this, "Please select department");
                     return;
                 }
-                if (fileRef.isEmpty()) {
-                    Utils.showOKDialog(CreateNewCorrespondenceActivity.this, "Please select fileRef");
-                    return;
-                }
+
                 submitCorrespondence();
 //                submit();
             }

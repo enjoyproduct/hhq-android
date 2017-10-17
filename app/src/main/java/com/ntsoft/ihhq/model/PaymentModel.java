@@ -23,6 +23,9 @@ public class PaymentModel {
             currency = jsonObject.getString("currency");
             if (jsonObject.has("remarks")) {
                 remarks = jsonObject.getString("remarks");
+                if (remarks.equals("null")) {
+                    remarks = "";
+                }
             } else {
                 remarks = "";
             }
