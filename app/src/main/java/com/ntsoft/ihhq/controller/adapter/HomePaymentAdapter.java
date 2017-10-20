@@ -18,6 +18,8 @@ import com.ntsoft.ihhq.model.CorrespondenceModel;
 import com.ntsoft.ihhq.model.PaymentModel;
 import com.ntsoft.ihhq.utility.FileDownloadCompleteListener;
 import com.ntsoft.ihhq.utility.FileDownloader;
+import com.ntsoft.ihhq.utility.FileUtility;
+import com.ntsoft.ihhq.utility.StringUtility;
 import com.ntsoft.ihhq.utility.TimeUtility;
 
 import java.io.File;
@@ -85,38 +87,51 @@ public class HomePaymentAdapter extends BaseAdapter {
                 downloadFile(position);
             }
         });
-
+        if (paymentModel.invoiceFilePath.isEmpty()) {
+            tvViewInvoice.setVisibility(View.GONE);
+        }
         return view;
     }
     void downloadFile(int position) {
+        PaymentModel payment = arrPayments.get(position);
         String url = "";
         String fileName = "";
+        if (payment.invoiceFilePath.isEmpty()) {
+            fileName = payment.file_ref + "--" + String.valueOf(arrPayments.get(position).payment_id) + ".pdf"; //assumed file is pdf
+        } else {
+            fileName = FileUtility.getFilenameFromPath(payment.invoiceFilePath);
+        }
         if (arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
             url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
-            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_invoice.pdf";
         } else if (arrPayments.get(position).status.equals(Constant.arrPaymentStatus[2])) {
             url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
-            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_receipt.pdf";
         } else {
             url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
-            fileName = String.valueOf(arrPayments.get(position).payment_id) + "_receipt.pdf";
         }
+        final String finalFileName = fileName;
         FileDownloader.downloadFile(mActivity, url,fileName, new FileDownloadCompleteListener() {
             @Override
             public void onComplete(String filePath) {
 //                Toast.makeText(mActivity, filePath, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 File file = new File(filePath);
-                if (filePath.contains(".pdf")) {
+                if (finalFileName.contains(".pdf")) {
                     intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
-                } else if (filePath.contains(".doc") || filePath.contains(".word")) {
-                    intent.setDataAndType( Uri.fromFile( file ), "application/msword" );
+                } else if (finalFileName.contains(".doc") || finalFileName.contains(".word")) {
+                    intent.setDataAndType(Uri.fromFile(file), "application/msword");
+                } else if (finalFileName.contains(".png")) {
+                    intent.setDataAndType(Uri.fromFile(file), "image/png");
+                } else if (finalFileName.contains(".jpeg") || finalFileName.contains(".jpg")) {
+                    intent.setDataAndType(Uri.fromFile(file), "image/jpg");
                 } else {
                     intent.setDataAndType( Uri.fromFile( file ), "application/vnd.ms-excel" );
                 }
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                mActivity.startActivity(intent);
+                if (file.exists()) {
+                    mActivity.startActivity(intent);
+                } else {
+                    return;
+                }
             }
         });
     }

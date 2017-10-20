@@ -191,7 +191,11 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     intent.setDataAndType( Uri.fromFile( file ), "application/vnd.ms-excel" );
                 }
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(intent);
+                if (file.exists()) {
+                    startActivity(intent);
+                } else {
+                    return;
+                }
             }
         });
     }

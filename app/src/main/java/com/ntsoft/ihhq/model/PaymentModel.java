@@ -12,6 +12,7 @@ import org.json.JSONObject;
 public class PaymentModel {
     public int payment_id, transaction_id;
     public String file_ref, purpose, amount, currency, remarks, status, created_at;
+    public String invoiceFilePath;
 
     public PaymentModel(JSONObject jsonObject) {
         try {
@@ -35,6 +36,11 @@ public class PaymentModel {
                 status = jsonObject.getString("status_detail");
             } else {
                 status = Constant.arrPaymentStatus[0];//for test
+            }
+            if (jsonObject.has("invoice")) {
+                invoiceFilePath = jsonObject.getString("invoice");
+            } else {
+                invoiceFilePath = "";
             }
 
         } catch (JSONException e) {

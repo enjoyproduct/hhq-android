@@ -41,7 +41,6 @@ public class API {
     public static String UPLOAD_RECEIPT = BASE_API_URL + "bankpayment";
 
     public static String DOWNLOAD_INVOICE = BASE_API_URL + "files/invoice/%d/download";
-    public static String DOWNLOAD_SLIP = BASE_API_URL + "files/slip/%d/download";
     public static String DOWNLOAD_RECEIPT = BASE_API_URL + "files/receipt/%d/download";
     public static String DOWNLOAD_TICKET_FILE = BASE_API_URL + "tickets/download?path=%s&name=%s";
 }
