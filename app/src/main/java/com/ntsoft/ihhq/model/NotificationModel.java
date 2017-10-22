@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class NotificationModel {
     public int id, id_send;
-    public String subject, message, created_at;
+    public String subject, message, file_ref, created_at;
     public NotificationModel(JSONObject jsonObject) {
         try {
             id = jsonObject.getInt("id");
@@ -17,6 +17,12 @@ public class NotificationModel {
             subject = jsonObject.getString("subject");
             message = jsonObject.getString("message");
             created_at = jsonObject.getString("created_at");
+            if (jsonObject.has("file_ref")) {
+                String fileRef = jsonObject.getString("file_ref");
+                if (!fileRef.equals("null")) {
+                    file_ref = fileRef;
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

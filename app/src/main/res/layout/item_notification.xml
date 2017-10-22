@@ -25,7 +25,12 @@
                 android:maxLines="1"
                 android:textColor="@color/solid_black"
                 android:text="Invoice #33242342"/>
-
+            <TextView
+                android:id="@+id/tv_file_ref"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/txt_10sp"
+                android:text="You received invoice"/>
 
             <TextView
                 android:id="@+id/tv_message"

@@ -153,10 +153,12 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etMessage.getText().toString().isEmpty()) {
+                if (etMessage.getText().toString().isEmpty() && filePath.isEmpty()) {
                     return;
                 }
-                buildTextMessage(etMessage.getText().toString());
+                if (!etMessage.getText().toString().isEmpty()) {
+                    buildTextMessage(etMessage.getText().toString());
+                }
                 if (!filePath.isEmpty()) {
                     buildAttachmentMessage(FileUtility.getFilenameFromPath(filePath), filePath);
                 }
@@ -351,7 +353,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         };
         customMultipartRequest.addStringPart("message", message);
         if (filePath.length() > 0) {
-            customMultipartRequest.addDocumentPart("attachment", filePath);
+            customMultipartRequest.addDocumentPart("attachments", filePath);
         } else {
         }
         RequestQueue requestQueue = Volley.newRequestQueue(this);

@@ -390,11 +390,11 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                 return header;
             }
         };
-
+        customMultipartRequest.addStringPart("message", "");
         String filePath = arrAttachments.get(0);
         arrAttachments.remove(0);
         if (filePath.length() > 0) {
-            customMultipartRequest.addDocumentPart("attachment", filePath);
+            customMultipartRequest.addDocumentPart("attachments", filePath);
         } else {
         }
         RequestQueue requestQueue = Volley.newRequestQueue(this);

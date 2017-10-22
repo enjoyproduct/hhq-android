@@ -46,10 +46,12 @@ public class NotificationAdapter extends BaseAdapter {
             convertView = mActivity.getLayoutInflater().inflate(R.layout.item_notification, null);
         }
         TextView tvCase = (TextView)convertView.findViewById(R.id.tv_case);
+        TextView tvFileRef = (TextView)convertView.findViewById(R.id.tv_file_ref);
         TextView tvMessage = (TextView)convertView.findViewById(R.id.tv_message);
         TextView tvDate = (TextView)convertView.findViewById(R.id.tv_date);
         NotificationModel notificationModel = arrNotifications.get(position);
         tvCase.setText(notificationModel.subject);
+        tvFileRef.setText(notificationModel.file_ref);
         tvMessage.setText(notificationModel.message);
         tvDate.setText(TimeUtility.timeFormatter(notificationModel.created_at));
         return convertView;

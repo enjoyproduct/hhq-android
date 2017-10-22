@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,13 +41,11 @@ import com.ntsoft.ihhq.R;
 import com.ntsoft.ihhq.constant.API;
 import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.controller.adapter.HomePaymentAdapter;
-import com.ntsoft.ihhq.controller.setting.ProfileActivity;
+import com.ntsoft.ihhq.controller.correspondence.CorrespondenceDetailActivity;
 import com.ntsoft.ihhq.model.FileModel;
 import com.ntsoft.ihhq.model.Global;
 import com.ntsoft.ihhq.model.PaymentModel;
 import com.ntsoft.ihhq.utility.BitmapUtility;
-import com.ntsoft.ihhq.utility.FileDownloadCompleteListener;
-import com.ntsoft.ihhq.utility.FileDownloader;
 import com.ntsoft.ihhq.utility.FileUtility;
 import com.ntsoft.ihhq.utility.Utils;
 import com.ntsoft.ihhq.utility.camera.AlbumStorageDirFactory;
@@ -81,8 +78,10 @@ public class HomePaymentFragment extends Fragment {
     int index;
     boolean isBillCreated;
 
-    String avatarPath;
+    String imagePath;
     String filePath;
+    int selectedPaymentType;
+    
     private static final int from_gallery = 1;
     private static final int from_camera = 2;
     private static final String JPEG_FILE_PREFIX = "iHHQ_";
@@ -116,15 +115,18 @@ public class HomePaymentFragment extends Fragment {
         mActivity = getActivity();
         arrPayments = new ArrayList<>();
         fileModel = ((HomeActivity)mActivity).fileModel;
+        filePath = "";
+        imagePath = "";
         billplzEmail = "";
         index = -1;
         isBillCreated = false;
-        avatarPath = "";
+        imagePath = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
             mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
+        selectedPaymentType = -1;
     }
     void initUI(View view) {
         listView = (ListView)view.findViewById(R.id.listview);
@@ -134,12 +136,14 @@ public class HomePaymentFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 isBillCreated = false;
-                if (Global.getInstance().me.role.equals(Constant.arrUserRoles[5])
-                        && arrPayments.get(position ).status.equals(Constant.arrPaymentStatus[0])
-                        && !fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
-                    index = position ;
-                    selectManualOrOnline();
+                if (Global.getInstance().me.role.equals(Constant.arrUserRoles[0]) || Global.getInstance().me.role.equals(Constant.arrUserRoles[5])) {
+                    if ( arrPayments.get(position ).status.equals(Constant.arrPaymentStatus[0])
+                            && !fileModel.assigned_role.equals(Constant.arrUserRoles[6])) {
+                        index = position ;
+                        selectManualOrOnline();
+                    }
                 }
+
             }
         });
     }
@@ -149,6 +153,7 @@ public class HomePaymentFragment extends Fragment {
         builder.setPositiveButton( Constant.arrPaymentMethod[0],
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        selectedPaymentType = 0;
                         selectReceiptType();
                         dialog.cancel();
                     }
@@ -156,7 +161,8 @@ public class HomePaymentFragment extends Fragment {
         builder.setNegativeButton( Constant.arrPaymentMethod[1],
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        inputBillplzEmail();
+                        selectedPaymentType = 1;
+                        selectMethod();
                         dialog.cancel();
                     }
                 });
@@ -169,6 +175,7 @@ public class HomePaymentFragment extends Fragment {
         builder.setCancelable(true);
         builder.show();
     }
+    //upload receipt
     void selectReceiptType() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle("");
@@ -192,7 +199,7 @@ public class HomePaymentFragment extends Fragment {
 
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
-                avatarPath = "";
+                imagePath = "";
                 dialog.cancel();
 
             }
@@ -221,7 +228,7 @@ public class HomePaymentFragment extends Fragment {
     void pickReceiptImage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle("Upload Receipt");
-        builder.setMessage("Upload transaction slip from");
+        builder.setMessage("Upload transaction slip/receipt from");
         builder.setCancelable(true);
         builder.setPositiveButton( "Camera",
                 new DialogInterface.OnClickListener() {
@@ -241,7 +248,7 @@ public class HomePaymentFragment extends Fragment {
 
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
-                avatarPath = "";
+                imagePath = "";
                 dialog.cancel();
 
             }
@@ -267,20 +274,28 @@ public class HomePaymentFragment extends Fragment {
                         cursor.moveToFirst();
 
                         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        avatarPath = cursor.getString(columnIndex);
+                        imagePath = cursor.getString(columnIndex);
                         cursor.close();
 
-                        Bitmap bitmap = BitmapUtility.adjustBitmap(avatarPath);
-                        avatarPath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(avatarPath));
-                        doUploadReceipt();
+                        Bitmap bitmap = BitmapUtility.adjustBitmap(imagePath);
+                        imagePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(imagePath));
+                        if (selectedPaymentType == 0) {
+                            doUploadReceipt();
+                        } else if (selectedPaymentType == 1) {
+                            createBill(0);
+                        }
                     }
                 }
                 break;
             case from_camera: {
                 if (resultCode == Activity.RESULT_OK) {
-                    Bitmap bitmap = BitmapUtility.adjustBitmap(avatarPath);
-                    avatarPath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(avatarPath));
-                    doUploadReceipt();
+                    Bitmap bitmap = BitmapUtility.adjustBitmap(imagePath);
+                    imagePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(imagePath));
+                    if (selectedPaymentType == 0) {
+                        doUploadReceipt();
+                    } else if (selectedPaymentType == 1) {
+                        createBill(0);
+                    }
                 }
                 break;
             }
@@ -294,7 +309,11 @@ public class HomePaymentFragment extends Fragment {
                         filePath = FileUtility.getPath(mActivity, uri);
                     }
                     if (filePath != null) {
-                        doUploadReceipt();
+                        if (selectedPaymentType == 0) {
+                            doUploadReceipt();
+                        } else if (selectedPaymentType == 1) {
+                            createBill(0);
+                        }
                     } else {
                         filePath = "";
                         Utils.showOKDialog(mActivity, "Cannot select this file");
@@ -310,7 +329,7 @@ public class HomePaymentFragment extends Fragment {
             return;
         }
 
-        if (avatarPath.isEmpty() && filePath.isEmpty()) {
+        if (imagePath.isEmpty() && filePath.isEmpty()) {
             return;
         }
         Utils.showProgress(mActivity);
@@ -366,9 +385,8 @@ public class HomePaymentFragment extends Fragment {
                 .addStringPart("payment_id", String.valueOf(arrPayments.get(index).payment_id))
                 .addStringPart("amount", arrPayments.get(index).amount);
 
-        if (avatarPath.length() > 0) {
-            customMultipartRequest
-                    .addImagePart("receipt", avatarPath);
+        if (imagePath.length() > 0) {
+            customMultipartRequest.addImagePart("receipt", imagePath);
         } else if (filePath.length() > 0){
             customMultipartRequest.addDocumentPart("receipt", filePath);
         }
@@ -385,7 +403,6 @@ public class HomePaymentFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 billplzEmail = input.getText().toString();
-//                selectMethod();
                 createBill(1);
                 dialog.cancel();
             }
@@ -405,7 +422,11 @@ public class HomePaymentFragment extends Fragment {
         builder.setSingleChoiceItems(Constant.arrBillplzMethod, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                createBill(which);
+                if (which == 0) {
+                    selectReceiptType();
+                } else if (which == 1) {
+                    inputBillplzEmail();
+                }
                 dialog.cancel();
             }
         });
@@ -419,21 +440,22 @@ public class HomePaymentFragment extends Fragment {
         builder.setCancelable(true);
         builder.show();
     }
-    void createBill( int method) {
+
+
+    private void createBill(final int method) {
         if (!Utils.haveNetworkConnection(mActivity)) {
             Utils.showToast(mActivity, "No internet connection");
             return;
         }
-
+        if (method == 0) {
+            if (filePath.isEmpty() && imagePath.isEmpty()) {
+                Utils.showToast(mActivity, "Please select attachment");
+                return;
+            }
+        }
         Utils.showProgress(mActivity);
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("payment_id", String.valueOf(arrPayments.get(index).payment_id));
-        params.put("method", Constant.arrBillplzMethod[method]);
-        params.put("amount", arrPayments.get(index).amount);
-        params.put("email_billpls", billplzEmail);
-        params.put("return_url", "http://hhqtouch.com.my");
         final RequestQueue requestQueue = Volley.newRequestQueue(mActivity);
-        CustomRequest customRequest = new CustomRequest(Request.Method.POST, API.CREATE_BILL, params,
+        CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(API.CREATE_BILL,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -443,8 +465,14 @@ public class HomePaymentFragment extends Fragment {
                             String status = response.getString("status");
                             if (status.equals("success")) {
                                 isBillCreated = true;
-                                String url = response.getString("url");
-                                launchBrowser(url);
+                                if (method == 1) {// in case of billplz
+                                    String url = response.getString("url");
+                                    launchBrowser(url);
+                                } else {//there is no url in case of bank
+                                    if (isBillCreated) {
+                                        checkBilling();
+                                    }
+                                }
                             } else {
                                 Utils.showOKDialog(mActivity, "Failed to create bill");
                             }
@@ -458,25 +486,20 @@ public class HomePaymentFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         Utils.hideProgress();
                         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            Toast.makeText(mActivity, "Network Timeout Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "TimeoutError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof AuthFailureError) {
-                            //TODO
-                            Toast.makeText(mActivity, "Auth Failure Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "AuthFailureError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
-                            //TODO
-                            Toast.makeText(mActivity, "Server Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "ServerError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof NetworkError) {
-                            //TODO
-                            Toast.makeText(mActivity, "Network Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "NetworkError", Toast.LENGTH_LONG).show();
                         } else if (error instanceof ParseError) {
-                            //TODO
-                            Toast.makeText(mActivity, "Parse Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "ParseError", Toast.LENGTH_LONG).show();
                         } else {
-                            //TODO
-                            Toast.makeText(mActivity, "Unknown Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, "UnknownError", Toast.LENGTH_LONG).show();
                         }
                     }
-                }) {
+                }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> header = new HashMap<String, String>();
@@ -484,7 +507,19 @@ public class HomePaymentFragment extends Fragment {
                 return header;
             }
         };
-        requestQueue.add(customRequest);
+        customMultipartRequest.addStringPart("payment_id", String.valueOf(arrPayments.get(index).payment_id));
+        customMultipartRequest.addStringPart("method", Constant.arrBillplzMethod[method]);
+        customMultipartRequest.addStringPart("amount", arrPayments.get(index).amount);
+        customMultipartRequest.addStringPart("email_billpls", billplzEmail);
+        customMultipartRequest.addStringPart("return_url", "http://hhqtouch.com.my");
+        if (method == 0) {//in case of bank
+            if (filePath.length() > 0) {
+                customMultipartRequest.addDocumentPart("receipt", filePath);
+            } else if (imagePath.length() > 0){
+                customMultipartRequest.addImagePart("receipt", imagePath);
+            }
+        }
+        requestQueue.add(customMultipartRequest);
     }
     void launchBrowser(String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -608,19 +643,19 @@ public class HomePaymentFragment extends Fragment {
         File f = null;
         try {
             f = setUpPhotoFile();
-            avatarPath = f.getAbsolutePath();
+            imagePath = f.getAbsolutePath();
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
         } catch (IOException e) {
             e.printStackTrace();
             f = null;
-            avatarPath = "";
+            imagePath = "";
         }
         startActivityForResult(takePictureIntent, from_camera);
     }
     private File setUpPhotoFile() throws IOException {
 
         File f = createImageFile();
-        avatarPath = f.getAbsolutePath();
+        imagePath = f.getAbsolutePath();
         return f;
     }
     private File createImageFile() throws IOException {

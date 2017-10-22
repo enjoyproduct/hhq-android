@@ -16,7 +16,7 @@ import com.ntsoft.ihhq.R;
 import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.controller.correspondence.CorrespondenceActiveFragment;
 import com.ntsoft.ihhq.controller.correspondence.CorrespondenceCompletedFragment;
-import com.ntsoft.ihhq.controller.correspondence.CorrespondenceFragment;
+import com.ntsoft.ihhq.controller.correspondence.CorrespondenceUnassignedFragment;
 import com.ntsoft.ihhq.model.Global;
 
 /**
@@ -63,13 +63,13 @@ public class CorrespondenceContainerFragment extends Fragment {
                     Fragment fragment1 = new CorrespondenceActiveFragment();
                     return fragment1;
                 case 1:
-                    Fragment fragment2 = new CorrespondenceFragment();
+                    Fragment fragment2 = new CorrespondenceUnassignedFragment();
                     return fragment2;
                 case 2:
                     Fragment fragment3 = new CorrespondenceCompletedFragment();
                     return fragment3;
                 default:
-                    return new CorrespondenceFragment();
+                    return new CorrespondenceUnassignedFragment();
             }
         }
 

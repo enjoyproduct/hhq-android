@@ -25,7 +25,7 @@ public class FileModel implements Serializable{
         int duration = 0;
         float milestone = 0;
     }
-    public int file_id, category_id, sub_category_id, type_id, status, created_by, updated_by
+    public int file_id, department_id, category_id, sub_category_id, type_id, status, created_by, updated_by
             , closed_by;
     public String file_ref, project_name, subject_matter, subject_description, contact_name, contact
             , contact_email, introducer, percent, billplz_collection_id, currency
@@ -37,6 +37,7 @@ public class FileModel implements Serializable{
     public FileModel(JSONObject jsonObject) {
         try {
             file_id = jsonObject.getInt("file_id");
+            department_id = jsonObject.getInt("department_id");
             category_id = jsonObject.getInt("category_id");
             sub_category_id = jsonObject.getInt("sub_category_id");
             status = jsonObject.getInt("status");
