@@ -105,11 +105,10 @@ public class HomePaymentAdapter extends BaseAdapter {
         else {
             fileName = payment.file_ref + "--" + String.valueOf(arrPayments.get(position).payment_id) + ".pdf"; //assumed file is pdf
         }
-        if (arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
-            url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
-
-        } else {
+        if (!payment.receiptFilePath.isEmpty() && !arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
             url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
+        } else {
+            url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
         }
         final String finalFileName = fileName;
         FileDownloader.downloadFile(mActivity, url,fileName, new FileDownloadCompleteListener() {

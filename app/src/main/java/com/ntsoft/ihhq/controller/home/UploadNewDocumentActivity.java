@@ -107,13 +107,6 @@ public class UploadNewDocumentActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/*");
-//        String[] mimetypes = {"application/msword"
-//                , "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-//                "application/xls"
-//                , "application/vnd.ms-excel"
-//                , "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-//                ,"application/pdf"};
-//        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {

@@ -365,11 +365,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
     void browseFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
-        String[] mimetypes = {"application/pdf", "application/doc", "application/xls"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+        intent.setType("application/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
         try {
             startActivityForResult(
                     Intent.createChooser(intent, "Select a File to Upload"),
