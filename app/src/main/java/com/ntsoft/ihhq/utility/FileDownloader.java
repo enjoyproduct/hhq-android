@@ -97,7 +97,7 @@ public class FileDownloader {
                 // Output stream
                 OutputStream output = new FileOutputStream(Constant.MEDIA_PATH + "/" + fileName);
 
-                byte data[] = new byte[1024];
+                byte data[] = new byte[2048];
 
                 long total = 0;
 
