@@ -140,7 +140,7 @@ public class HomeUpdateAdapter extends BaseAdapter {
                         @Override
                         public void onClick(View v) {
                             if (!updateModel.logisticModel.desc.isEmpty()) {
-                                Utils.showDialog(mActivity, updateModel.logisticModel.desc, "");
+                                Utils.showDialog(mActivity, updateModel.logisticModel.file_ref , updateModel.logisticModel.desc);
                             }
                         }
                     });

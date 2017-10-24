@@ -189,8 +189,10 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
                 } else if (fileName.contains(".doc") || filePath.contains(".word")) {
                     intent.setDataAndType( Uri.fromFile( file ), "application/msword");
-                } else {
+                }else if (fileName.contains(".xls")) {
                     intent.setDataAndType( Uri.fromFile( file ), "application/vnd.ms-excel" );
+                } else {
+                    intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
                 }
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 if (file.exists()) {

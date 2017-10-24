@@ -17,7 +17,8 @@ import java.io.File;
  */
 public class FileUtility {
     public static String getFilenameFromPath(String fileLocalPath) {
-        return fileLocalPath.substring(fileLocalPath.lastIndexOf("/") + 1);
+        int lastIndex = fileLocalPath.lastIndexOf("/");
+        return fileLocalPath.substring(lastIndex + 1);
     }
     public static void deleteFilesInDirectory(String dirPath){
         File f = new File(dirPath);

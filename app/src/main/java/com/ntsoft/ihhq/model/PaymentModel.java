@@ -39,11 +39,17 @@ public class PaymentModel {
             }
             if (jsonObject.has("invoice")) {
                 invoiceFilePath = jsonObject.getString("invoice");
+                if (invoiceFilePath.equals("null")) {
+                    invoiceFilePath = "";
+                }
             } else {
                 invoiceFilePath = "";
             }
             if (jsonObject.has("receipt")) {
                 receiptFilePath = jsonObject.getString("receipt");
+                if (receiptFilePath.equals("null")) {
+                    receiptFilePath = "";
+                }
             } else {
                 receiptFilePath = "";
             }

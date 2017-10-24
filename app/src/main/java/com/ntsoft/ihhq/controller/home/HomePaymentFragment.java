@@ -80,8 +80,7 @@ public class HomePaymentFragment extends Fragment {
 
     String imagePath;
     String filePath;
-    int selectedPaymentType;
-    
+
     private static final int from_gallery = 1;
     private static final int from_camera = 2;
     private static final String JPEG_FILE_PREFIX = "iHHQ_";
@@ -126,7 +125,6 @@ public class HomePaymentFragment extends Fragment {
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
-        selectedPaymentType = -1;
     }
     void initUI(View view) {
         listView = (ListView)view.findViewById(R.id.listview);
@@ -153,7 +151,6 @@ public class HomePaymentFragment extends Fragment {
         builder.setPositiveButton( Constant.arrPaymentMethod[0],
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedPaymentType = 0;
                         selectReceiptType();
                         dialog.cancel();
                     }
@@ -161,8 +158,7 @@ public class HomePaymentFragment extends Fragment {
         builder.setNegativeButton( Constant.arrPaymentMethod[1],
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedPaymentType = 1;
-                        selectMethod();
+                        createBill();
                         dialog.cancel();
                     }
                 });
@@ -279,11 +275,7 @@ public class HomePaymentFragment extends Fragment {
 
                         Bitmap bitmap = BitmapUtility.adjustBitmap(imagePath);
                         imagePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(imagePath));
-                        if (selectedPaymentType == 0) {
-                            doUploadReceipt();
-                        } else if (selectedPaymentType == 1) {
-                            createBill(0);
-                        }
+                        doUploadReceipt();
                     }
                 }
                 break;
@@ -291,11 +283,7 @@ public class HomePaymentFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bitmap = BitmapUtility.adjustBitmap(imagePath);
                     imagePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(imagePath));
-                    if (selectedPaymentType == 0) {
-                        doUploadReceipt();
-                    } else if (selectedPaymentType == 1) {
-                        createBill(0);
-                    }
+                    doUploadReceipt();
                 }
                 break;
             }
@@ -309,11 +297,7 @@ public class HomePaymentFragment extends Fragment {
                         filePath = FileUtility.getPath(mActivity, uri);
                     }
                     if (filePath != null) {
-                        if (selectedPaymentType == 0) {
-                            doUploadReceipt();
-                        } else if (selectedPaymentType == 1) {
-                            createBill(0);
-                        }
+                        doUploadReceipt();
                     } else {
                         filePath = "";
                         Utils.showOKDialog(mActivity, "Cannot select this file");
@@ -393,66 +377,14 @@ public class HomePaymentFragment extends Fragment {
 
         requestQueue.add(customMultipartRequest);
     }
-    void inputBillplzEmail() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle("Please insert email");
-        final EditText input = new EditText(mActivity);
-        input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        builder.setView(input);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                billplzEmail = input.getText().toString();
-                createBill(1);
-                dialog.cancel();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.setCancelable(true);
-        builder.show();
-    }
-    void selectMethod() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle("Please select payment method");
-        builder.setSingleChoiceItems(Constant.arrBillplzMethod, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    selectReceiptType();
-                } else if (which == 1) {
-                    inputBillplzEmail();
-                }
-                dialog.cancel();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.setCancelable(true);
-        builder.show();
-    }
 
 
-    private void createBill(final int method) {
+    private void createBill() {
         if (!Utils.haveNetworkConnection(mActivity)) {
             Utils.showToast(mActivity, "No internet connection");
             return;
         }
-        if (method == 0) {
-            if (filePath.isEmpty() && imagePath.isEmpty()) {
-                Utils.showToast(mActivity, "Please select attachment");
-                return;
-            }
-        }
+
         Utils.showProgress(mActivity);
         final RequestQueue requestQueue = Volley.newRequestQueue(mActivity);
         CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(API.CREATE_BILL,
@@ -465,14 +397,8 @@ public class HomePaymentFragment extends Fragment {
                             String status = response.getString("status");
                             if (status.equals("success")) {
                                 isBillCreated = true;
-                                if (method == 1) {// in case of billplz
-                                    String url = response.getString("url");
-                                    launchBrowser(url);
-                                } else {//there is no url in case of bank
-                                    if (isBillCreated) {
-                                        checkBilling();
-                                    }
-                                }
+                                String url = response.getString("url");
+                                launchBrowser(url);
                             } else {
                                 Utils.showOKDialog(mActivity, "Failed to create bill");
                             }
@@ -508,17 +434,6 @@ public class HomePaymentFragment extends Fragment {
             }
         };
         customMultipartRequest.addStringPart("payment_id", String.valueOf(arrPayments.get(index).payment_id));
-        customMultipartRequest.addStringPart("method", Constant.arrBillplzMethod[method]);
-        customMultipartRequest.addStringPart("amount", arrPayments.get(index).amount);
-        customMultipartRequest.addStringPart("email_billpls", billplzEmail);
-        customMultipartRequest.addStringPart("return_url", "http://hhqtouch.com.my");
-        if (method == 0) {//in case of bank
-            if (filePath.length() > 0) {
-                customMultipartRequest.addDocumentPart("receipt", filePath);
-            } else if (imagePath.length() > 0){
-                customMultipartRequest.addImagePart("receipt", imagePath);
-            }
-        }
         requestQueue.add(customMultipartRequest);
     }
     void launchBrowser(String url) {
