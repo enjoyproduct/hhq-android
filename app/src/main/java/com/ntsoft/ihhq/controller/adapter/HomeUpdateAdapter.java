@@ -106,9 +106,7 @@ public class HomeUpdateAdapter extends BaseAdapter {
                     holder.ll_container.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (!updateModel.milestoneModel.remark.isEmpty()) {
-                                Utils.showDialog(mActivity, updateModel.milestoneModel.activity, updateModel.milestoneModel.remark);
-                            }
+                            Utils.showDialog(mActivity, updateModel.milestoneModel.activity, updateModel.milestoneModel.remark);
                         }
                     });
                 } else {
@@ -139,9 +137,7 @@ public class HomeUpdateAdapter extends BaseAdapter {
                     holder.ll_container.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (!updateModel.logisticModel.desc.isEmpty()) {
-                                Utils.showDialog(mActivity, updateModel.logisticModel.file_ref , updateModel.logisticModel.desc);
-                            }
+                            Utils.showDialog(mActivity, updateModel.logisticModel.file_ref , updateModel.logisticModel.desc);
                         }
                     });
                     holder.ibScan.setOnClickListener(new View.OnClickListener() {

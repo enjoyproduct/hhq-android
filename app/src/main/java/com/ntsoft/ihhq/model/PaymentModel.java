@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class PaymentModel {
     public int payment_id, transaction_id;
     public String file_ref, purpose, amount, currency, remarks, status, created_at;
-    public String invoiceFilePath, receiptFilePath;
+    public String invoiceFilePath, receiptFilePath, officialReceiptFilePath;
 
     public PaymentModel(JSONObject jsonObject) {
         try {
@@ -52,6 +52,14 @@ public class PaymentModel {
                 }
             } else {
                 receiptFilePath = "";
+            }
+            if (jsonObject.has("receipt_office")) {
+                officialReceiptFilePath = jsonObject.getString("receipt");
+                if (officialReceiptFilePath.equals("null")) {
+                    officialReceiptFilePath = "";
+                }
+            } else {
+                officialReceiptFilePath = "";
             }
         } catch (JSONException e) {
             e.printStackTrace();

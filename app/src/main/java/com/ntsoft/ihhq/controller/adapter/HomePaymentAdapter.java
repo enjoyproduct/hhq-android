@@ -97,18 +97,17 @@ public class HomePaymentAdapter extends BaseAdapter {
         String url = "";
         String fileName = "";
 
-        if (!payment.receiptFilePath.isEmpty()){
+        if (!payment.officialReceiptFilePath.isEmpty()) {
+            url = String.format(API.DOWNLOAD_OFFICIAL_RECEIPT, arrPayments.get(position).payment_id);
+            fileName = FileUtility.getFilenameFromPath(payment.officialReceiptFilePath);
+        } else if (!payment.receiptFilePath.isEmpty() && !arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
+            url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
             fileName = FileUtility.getFilenameFromPath(payment.receiptFilePath);
         } else if (!payment.invoiceFilePath.isEmpty()) {
-            fileName = FileUtility.getFilenameFromPath(payment.invoiceFilePath);
-        }
-        else {
-            fileName = payment.file_ref + "--" + String.valueOf(arrPayments.get(position).payment_id) + ".pdf"; //assumed file is pdf
-        }
-        if (!payment.receiptFilePath.isEmpty() && !arrPayments.get(position).status.equals(Constant.arrPaymentStatus[0])) {
-            url = String.format(API.DOWNLOAD_RECEIPT, arrPayments.get(position).payment_id);
-        } else {
             url = String.format(API.DOWNLOAD_INVOICE, arrPayments.get(position).payment_id);
+            fileName = FileUtility.getFilenameFromPath(payment.invoiceFilePath);
+        } else {
+            return;
         }
         final String finalFileName = fileName;
         FileDownloader.downloadFile(mActivity, url,fileName, new FileDownloadCompleteListener() {

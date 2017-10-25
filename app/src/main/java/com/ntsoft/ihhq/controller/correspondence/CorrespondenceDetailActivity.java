@@ -314,7 +314,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
             Utils.showToast(this, "No internet connection");
             return;
         }
-
+        Utils.showProgress(this);
         CustomMultipartRequest customMultipartRequest = new CustomMultipartRequest(urlPostMessage,
                 new Response.Listener<JSONObject>() {
                     @Override
