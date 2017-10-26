@@ -31,7 +31,7 @@ public class MenuFragment extends Fragment {
     private Activity mActivity;
 
     String[] images = {"menu_home", "menu_notification", "menu_empower", "menu_support", "menu_scan_qr_code", "menu_setting", "menu_sign_out"};
-    String[] titles = {"Home", "Notifications", "Empower", "Correspondence","Scan QR Code", "Settings", "Logout"};
+    String[] titles = {"Home", "Notifications", "Empower", "My Correspondence","Scan QR Code", "Settings", "Logout"};
 
     ArrayList<MenuModel> arrMenus;
     int selectedNum = 0;

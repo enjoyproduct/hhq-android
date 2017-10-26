@@ -83,7 +83,7 @@ public class HomePaymentFragment extends Fragment {
 
     private static final int from_gallery = 1;
     private static final int from_camera = 2;
-    private static final String JPEG_FILE_PREFIX = "iHHQ_";
+    private static final String JPEG_FILE_PREFIX = "HHQ_";
     private static final String JPEG_FILE_SUFFIX = ".jpg";
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 

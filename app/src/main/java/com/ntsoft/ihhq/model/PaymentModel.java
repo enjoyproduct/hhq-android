@@ -54,7 +54,7 @@ public class PaymentModel {
                 receiptFilePath = "";
             }
             if (jsonObject.has("receipt_office")) {
-                officialReceiptFilePath = jsonObject.getString("receipt");
+                officialReceiptFilePath = jsonObject.getString("receipt_office");
                 if (officialReceiptFilePath.equals("null")) {
                     officialReceiptFilePath = "";
                 }

@@ -1,9 +1,16 @@
 package com.ntsoft.ihhq.controller.correspondence;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,18 +50,23 @@ import com.ntsoft.ihhq.model.CorrespondenceModel;
 import com.ntsoft.ihhq.model.FileModel;
 import com.ntsoft.ihhq.model.Global;
 import com.ntsoft.ihhq.model.MessageModel;
+import com.ntsoft.ihhq.utility.BitmapUtility;
 import com.ntsoft.ihhq.utility.FileDownloadCompleteListener;
 import com.ntsoft.ihhq.utility.FileDownloader;
 import com.ntsoft.ihhq.utility.FileUtility;
 import com.ntsoft.ihhq.utility.StringUtility;
 import com.ntsoft.ihhq.utility.TimeUtility;
 import com.ntsoft.ihhq.utility.Utils;
+import com.ntsoft.ihhq.utility.camera.AlbumStorageDirFactory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,9 +83,15 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
     Button btnSend;
     ImageButton ibAttach;
     EditText etMessage;
-    String filePath;
-    FileModel fileModel;
 
+    FileModel fileModel;
+    String filePath;
+    private static final int from_gallery = 1;
+    private static final int from_camera = 2;
+    private static final String JPEG_FILE_PREFIX = "HHQ_";
+    private static final String JPEG_FILE_SUFFIX = ".jpg";
+    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,7 +164,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         ibAttach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                browseFile();
+                selectAttachmentType();
             }
         });
         btnSend = (Button)findViewById(R.id.btn_send);
@@ -181,10 +199,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         FileDownloader.downloadFile(this, endpoint, fileName, new FileDownloadCompleteListener() {
             @Override
             public void onComplete(String filePath) {
-//                Toast.makeText(mActivity, filePath, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 File file = new File(filePath);
-
                 if (fileName.contains(".pdf")) {
                     intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
                 } else if (fileName.contains(".doc") || filePath.contains(".word")) {
@@ -192,7 +208,7 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                 }else if (fileName.contains(".xls")) {
                     intent.setDataAndType( Uri.fromFile( file ), "application/vnd.ms-excel" );
                 } else {
-                    intent.setDataAndType( Uri.fromFile( file ), "application/pdf" );
+                    intent.setDataAndType( Uri.fromFile( file ), "image/*" );
                 }
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 if (file.exists()) {
@@ -321,6 +337,16 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         Utils.hideProgress();
                         try {
+                            JSONObject message = response.getJSONObject("message");
+                            JSONArray attachments = message.getJSONArray("attachments");
+                            if (attachments.length() > 0) {
+                                String path = attachments.getJSONObject(0).getString("path");
+                                String name = attachments.getJSONObject(0).getString("name");
+                                arrMessages.get(arrMessages.size() - 1).attachmentName = name;
+                                arrMessages.get(arrMessages.size() - 1).attachmentPath = path;
+                                mAdapter.notifyDataSetChanged();
+                                listView.smoothScrollByOffset(arrMessages.size() - 1);
+                            }
                             Utils.showToast(CorrespondenceDetailActivity.this, "success");
                         }catch (Exception e) {
                             e.printStackTrace();
@@ -355,7 +381,12 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         };
         customMultipartRequest.addStringPart("message", message);
         if (filePath.length() > 0) {
-            customMultipartRequest.addDocumentPart("attachments", filePath);
+            String fileName = FileUtility.getFilenameFromPath(filePath);
+            if (fileName.contains(".png") || fileName.contains(".jpg") || fileName.contains(".jpeg")) {
+                customMultipartRequest.addImagePart("attachments", filePath);
+            } else {
+                customMultipartRequest.addDocumentPart("attachments", filePath);
+            }
         } else {
         }
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -363,6 +394,37 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
     }
 
     ////////////////////////
+    void selectAttachmentType() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select attachment type");
+        builder.setMessage("");
+        builder.setCancelable(true);
+        builder.setPositiveButton( "Document",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        browseFile();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNegativeButton( "Photo",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        pickCorrespondenceImage();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNeutralButton( "Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                filePath = "";
+                dialog.cancel();
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
     private static final int FILE_SELECT_CODE = 0;
     void browseFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -379,11 +441,70 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+    void pickCorrespondenceImage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select photo from");
+        builder.setMessage("");
+        builder.setCancelable(true);
+        builder.setPositiveButton( "Camera",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dispatchTakePictureIntent();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNegativeButton( "Gallery",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        takePictureFromGallery();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNeutralButton( "Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                filePath = "";
+                dialog.cancel();
+
+            }
+        });
+//        dialog.setCancelable(true);
+//        dialog.setCanceledOnTouchOutside(false);
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
     @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            case from_gallery:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                        Cursor cursor = this.getContentResolver().query(
+                                selectedImage, filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        filePath = cursor.getString(columnIndex);
+                        cursor.close();
+
+                        Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
+                        filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                    }
+                }
+                break;
+            case from_camera: {
+                if (resultCode == Activity.RESULT_OK) {
+                    Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
+                    filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                }
+                break;
+            }
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
@@ -412,5 +533,61 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    //////////////////take a picture from gallery
+    private void takePictureFromGallery()
+    {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, from_gallery);
+    }
+    /////////////capture photo
+    public void dispatchTakePictureIntent() {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File f = null;
+        try {
+            f = setUpPhotoFile();
+            filePath = f.getAbsolutePath();
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+        } catch (IOException e) {
+            e.printStackTrace();
+            f = null;
+            filePath = "";
+        }
+        startActivityForResult(takePictureIntent, from_camera);
+    }
+    private File setUpPhotoFile() throws IOException {
+
+        File f = createImageFile();
+        filePath = f.getAbsolutePath();
+        return f;
+    }
+    private File createImageFile() throws IOException {
+
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+        File albumF = getAlbumDir();
+        File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+        return imageF;
+    }
+    private File getAlbumDir() {
+
+        File storageDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            storageDir = mAlbumStorageDirFactory.getAlbumStorageDir("AllyTours");
+            if (storageDir != null) {
+                if (! storageDir.mkdirs()) {
+                    if (! storageDir.exists()){
+                        Log.d("CameraSample", "failed to create directory");
+                        return null;
+                    }
+                }
+            }
+        } else {
+            Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+        }
+        return storageDir;
     }
 }

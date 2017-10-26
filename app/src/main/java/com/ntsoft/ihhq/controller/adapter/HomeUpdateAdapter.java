@@ -1,9 +1,12 @@
 package com.ntsoft.ihhq.controller.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
@@ -106,7 +109,7 @@ public class HomeUpdateAdapter extends BaseAdapter {
                     holder.ll_container.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Utils.showDialog(mActivity, updateModel.milestoneModel.activity, updateModel.milestoneModel.remark);
+                           showDialog(mActivity, updateModel.milestoneModel.activity, updateModel.milestoneModel.remark);
                         }
                     });
                 } else {
@@ -137,7 +140,7 @@ public class HomeUpdateAdapter extends BaseAdapter {
                     holder.ll_container.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Utils.showDialog(mActivity, updateModel.logisticModel.file_ref , updateModel.logisticModel.desc);
+                            showDialog(mActivity, updateModel.logisticModel.file_ref , updateModel.logisticModel.desc);
                         }
                     });
                     holder.ibScan.setOnClickListener(new View.OnClickListener() {
@@ -159,12 +162,6 @@ public class HomeUpdateAdapter extends BaseAdapter {
         }
         convertView.setTag(holder);
 
-//        if (convertView == null) {
-//
-//        } else {
-//            holder = (ViewHolder) convertView.getTag();
-//        }
-
         return convertView;
     }
 
@@ -176,5 +173,26 @@ public class HomeUpdateAdapter extends BaseAdapter {
         public TextView tvReceiver, tvDescription, tvDescription1, tvMethod, tvStatus1, tvStatus2;
         public LinearLayout ll_container, llStatus;
         public ImageButton ibScan;
+    }
+    void showDialog(Context context, String title,  String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        TextView tvTitle = new TextView(context);
+        tvTitle.setTypeface(tvTitle.getTypeface(), Typeface.BOLD);
+        tvTitle.setTextSize(16);
+        tvTitle.setTextColor(context.getResources().getColor(R.color.solid_black));
+        tvTitle.setPadding(16,16,16,16);
+        tvTitle.setText(title);
+        builder.setCustomTitle(tvTitle);
+        builder.setMessage(message);
+        builder.setCancelable(true);
+        builder.setPositiveButton( "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

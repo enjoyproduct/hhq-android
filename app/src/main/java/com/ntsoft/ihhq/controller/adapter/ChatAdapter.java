@@ -63,17 +63,19 @@ public class ChatAdapter extends BaseAdapter {
             imageView.setVisibility(View.GONE);
 
             tvMessage.setText(messageModel.message);
-        } else {//attacj,emt
+        } else {//attachment
             tvMessage.setVisibility(View.GONE);
             tvTime.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
 
             if (messageModel.attachmentName.contains(".pdf")) {
                 imageView.setBackgroundDrawable(mActivity.getResources().getDrawable(R.drawable.pdf));
-            } else if (messageModel.attachmentName.contains(".doc")) {
+            } else if (messageModel.attachmentName.contains(".doc") || messageModel.attachmentName.contains(".word")) {
                 imageView.setBackgroundDrawable(mActivity.getResources().getDrawable(R.drawable.doc));
-            } else {
+            } else if (messageModel.attachmentName.contains(".xls")){
                 imageView.setBackgroundDrawable(mActivity.getResources().getDrawable(R.drawable.excel));
+            } else if (messageModel.attachmentName.contains(".png") || messageModel.attachmentName.contains(".jpg") || messageModel.attachmentName.contains(".jpeg")) {
+                imageView.setBackgroundDrawable(mActivity.getResources().getDrawable(R.drawable.picture));
             }
         }
         if (position == 0) {
