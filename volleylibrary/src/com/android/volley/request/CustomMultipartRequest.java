@@ -56,7 +56,8 @@ public class CustomMultipartRequest extends Request<JSONObject> {
         return this;
     }
     public CustomMultipartRequest addImagePart(String key, String filePath) {
-        FilePart filePart = new FilePart(key, new File(filePath), filePath.substring(filePath.lastIndexOf("/") + 1), "image/jpg");
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        FilePart filePart = new FilePart(key, new File(filePath), filePath.substring(filePath.lastIndexOf("/") + 1), "image/png");
         multipartEntity.addPart(filePart);
         return this;
     }
@@ -69,8 +70,6 @@ public class CustomMultipartRequest extends Request<JSONObject> {
     public CustomMultipartRequest addDocumentPart(String key, String filePath) {
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         FilePart filePart = new FilePart(key, new File(filePath), fileName, "application/*");
-
-//        FilePart filePart = new FilePart(key, new File(filePath), null, null);
         multipartEntity.addPart(filePart);
 
         return this;

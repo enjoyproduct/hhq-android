@@ -177,10 +177,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                 if (!etMessage.getText().toString().isEmpty()) {
                     buildTextMessage(etMessage.getText().toString());
                 }
-                if (!filePath.isEmpty()) {
-                    buildAttachmentMessage(FileUtility.getFilenameFromPath(filePath), filePath);
-                }
-                sendMessage(etMessage.getText().toString(), filePath);
+
+                sendMessage(etMessage.getText().toString(), "");
                 etMessage.setText("");
                 filePath = "";
             }
@@ -357,19 +355,19 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Utils.hideProgress();
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "TimeoutError", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof AuthFailureError) {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "AuthFailureError", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ServerError) {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "ServerError", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof NetworkError) {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "NetworkError", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ParseError) {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "ParseError", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(CorrespondenceDetailActivity.this, "UnknownError", Toast.LENGTH_LONG).show();
-                        }
+//                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "TimeoutError", Toast.LENGTH_LONG).show();
+//                        } else if (error instanceof AuthFailureError) {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "AuthFailureError", Toast.LENGTH_LONG).show();
+//                        } else if (error instanceof ServerError) {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "ServerError", Toast.LENGTH_LONG).show();
+//                        } else if (error instanceof NetworkError) {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "NetworkError", Toast.LENGTH_LONG).show();
+//                        } else if (error instanceof ParseError) {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "ParseError", Toast.LENGTH_LONG).show();
+//                        } else {
+//                            Toast.makeText(CorrespondenceDetailActivity.this, "UnknownError", Toast.LENGTH_LONG).show();
+//                        }
                     }
                 }){
             @Override
@@ -495,6 +493,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
 
                         Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
                         filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                        buildAttachmentMessage(FileUtility.getFilenameFromPath(filePath), filePath);
+                        sendMessage("", filePath);
                     }
                 }
                 break;
@@ -502,6 +502,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
                     filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                    buildAttachmentMessage(FileUtility.getFilenameFromPath(filePath), filePath);
+                    sendMessage("", filePath);
                 }
                 break;
             }
@@ -515,14 +517,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     String message = etMessage.getText().toString();
                     if (path != null) {
                         filePath = path;
-//                        if (message.isEmpty()) {
-//                            filePath = path;
-//                        } else {
-//                            buildTextMessage(message);
-//                            buildAttachmentMessage(FileUtility.getFilenameFromPath(path), path);
-//                            sendMessage(message, path);
-//                            etMessage.setText("");
-//                        }
+                        buildAttachmentMessage(FileUtility.getFilenameFromPath(filePath), filePath);
+                        sendMessage("", filePath);
                     } else {
                     }
                     Log.d(TAG, "File Path: " + path);

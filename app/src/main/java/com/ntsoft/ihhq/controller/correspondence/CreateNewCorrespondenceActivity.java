@@ -327,14 +327,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         if (!fileRef.isEmpty()) {
             customMultipartRequest.addStringPart("file_ref", fileRef);
         }
-//        int entitycount = customMultipartRequest.getEntityCount();
-//        for (int i = 0; i < arrAttachments.size(); i ++) {
-//            customMultipartRequest.addDocumentPart("attachments", arrAttachments.get(i));
-//        }
-//        entitycount = customMultipartRequest.getEntityCount();
         requestQueue.add(customMultipartRequest);
-
-
     }
 
     private void uploadFile() {
