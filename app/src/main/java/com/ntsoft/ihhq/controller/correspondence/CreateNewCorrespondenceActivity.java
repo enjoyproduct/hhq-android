@@ -1,10 +1,15 @@
 package com.ntsoft.ihhq.controller.correspondence;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -36,9 +41,13 @@ import com.ntsoft.ihhq.R;
 import com.ntsoft.ihhq.constant.API;
 import com.ntsoft.ihhq.constant.Constant;
 import com.ntsoft.ihhq.model.Global;
+import com.ntsoft.ihhq.utility.BitmapUtility;
 import com.ntsoft.ihhq.utility.FileUtility;
 import com.ntsoft.ihhq.utility.FileUtils;
 import com.ntsoft.ihhq.utility.Utils;
+import com.ntsoft.ihhq.utility.camera.AlbumStorageDirFactory;
+import com.ntsoft.ihhq.utility.camera.BaseAlbumDirFactory;
+import com.ntsoft.ihhq.utility.camera.FroyoAlbumDirFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +55,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +79,13 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
     String message, subject;
     boolean comeFromFile = false;
     int ticketID = 0;
+
+    private static final int from_gallery = 1;
+    private static final int from_camera = 2;
+    private static final String JPEG_FILE_PREFIX = "HHQ_";
+    private static final String JPEG_FILE_SUFFIX = ".jpg";
+    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +115,12 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         }
         message = "";
         subject = "";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+        } else {
+            mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+        }
     }
     void initUI() {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -387,7 +411,12 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
         String filePath = arrAttachments.get(0);
         arrAttachments.remove(0);
         if (filePath.length() > 0) {
-            customMultipartRequest.addDocumentPart("attachments", filePath);
+            String fileName = FileUtility.getFilenameFromPath(filePath);
+            if (fileName.contains(".png") || fileName.contains(".jpg") || fileName.contains(".jpg")) {
+                customMultipartRequest.addImagePart("attachments", filePath);
+            } else {
+                customMultipartRequest.addDocumentPart("attachments", filePath);
+            }
         } else {
         }
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -449,21 +478,63 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                showDeleteDlg(which);
             }
         });
-        builder1.setPositiveButton( "Add",
+        builder1.setPositiveButton( "Document",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         browseFile();
                         dialog.cancel();
                     }
                 });
-        builder1.setNegativeButton( "Cancel", new DialogInterface.OnClickListener() {
+        builder1.setNegativeButton( "Photo", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                pickCorrespondenceImage();
                 dialog.dismiss();
+            }
+        });
+        builder1.setNeutralButton( "Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                filePath = "";
+                dialog.cancel();
+
             }
         });
         builder1.setCancelable(false);
         AlertDialog alert = builder1.create();
+        alert.show();
+    }
+
+    void pickCorrespondenceImage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select photo from");
+        builder.setMessage("");
+        builder.setCancelable(true);
+        builder.setPositiveButton( "Camera",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dispatchTakePictureIntent();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNegativeButton( "Gallery",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        takePictureFromGallery();
+                        dialog.cancel();
+                    }
+                });
+        builder.setNeutralButton( "Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                filePath = "";
+                dialog.cancel();
+
+            }
+        });
+        AlertDialog alert = builder.create();
         alert.show();
     }
     public void showDeleteDlg(final int index) {
@@ -485,15 +556,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                         dialog.cancel();
                     }
                 });
-//        builder.setNeutralButton("Open", new DialogInterface.OnClickListener() {
-//
-//            @Override
-//            public void onClick(DialogInterface arg0, int arg1) {
-//                // TODO Auto-generated method stub
-//                Toast.makeText(getApplicationContext(), "Close is clicked", Toast.LENGTH_LONG).show();
-//
-//            }
-//        });
+
         builder.setCancelable(true);
         AlertDialog alert = builder.create();
         alert.show();
@@ -503,10 +566,7 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
     private static final int FILE_SELECT_CODE = 0;
     void browseFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/*");
-//        String[] mimetypes = {"application/pdf", "application/word", "application/vnd.ms-excel", "application/doc", "application/xls"};
-//        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
@@ -539,8 +599,93 @@ public class CreateNewCorrespondenceActivity extends AppCompatActivity {
                     // Initiate the upload
                 }
                 break;
+            case from_camera: {
+                if (resultCode == Activity.RESULT_OK) {
+                    Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
+                    filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                    arrAttachments.add(filePath);
+                }
+                break;
+            }
+            case from_gallery:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                        Cursor cursor = this.getContentResolver().query(
+                                selectedImage, filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        filePath = cursor.getString(columnIndex);
+                        cursor.close();
+
+                        Bitmap bitmap = BitmapUtility.adjustBitmap(filePath);
+                        filePath = BitmapUtility.saveBitmap(bitmap, Constant.MEDIA_PATH + "hhq", FileUtility.getFilenameFromPath(filePath));
+                        arrAttachments.add(filePath);
+                    }
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    //////////////////take a picture from gallery
+    private void takePictureFromGallery()
+    {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, from_gallery);
+    }
+    /////////////capture photo
+    String filePath = "";
+    public void dispatchTakePictureIntent() {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File f = null;
+        try {
+            f = setUpPhotoFile();
+            filePath = f.getAbsolutePath();
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+        } catch (IOException e) {
+            e.printStackTrace();
+            f = null;
+            filePath = "";
+        }
+        startActivityForResult(takePictureIntent, from_camera);
+    }
+    private File setUpPhotoFile() throws IOException {
+
+        File f = createImageFile();
+        filePath = f.getAbsolutePath();
+        return f;
+    }
+    private File createImageFile() throws IOException {
+
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+        File albumF = getAlbumDir();
+        File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+        return imageF;
+    }
+    private File getAlbumDir() {
+
+        File storageDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            storageDir = mAlbumStorageDirFactory.getAlbumStorageDir("AllyTours");
+            if (storageDir != null) {
+                if (! storageDir.mkdirs()) {
+                    if (! storageDir.exists()){
+                        Log.d("CameraSample", "failed to create directory");
+                        return null;
+                    }
+                }
+            }
+        } else {
+            Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+        }
+        return storageDir;
+    }
 }

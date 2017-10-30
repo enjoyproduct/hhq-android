@@ -58,6 +58,8 @@ import com.ntsoft.ihhq.utility.StringUtility;
 import com.ntsoft.ihhq.utility.TimeUtility;
 import com.ntsoft.ihhq.utility.Utils;
 import com.ntsoft.ihhq.utility.camera.AlbumStorageDirFactory;
+import com.ntsoft.ihhq.utility.camera.BaseAlbumDirFactory;
+import com.ntsoft.ihhq.utility.camera.FroyoAlbumDirFactory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -115,8 +117,15 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
         } else {
             fileModel = null;
         }
+
         arrMessages = new ArrayList<>();
         filePath = "";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+        } else {
+            mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+        }
     }
     void initUI() {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -335,8 +344,9 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         Utils.hideProgress();
                         try {
-                            JSONObject message = response.getJSONObject("message");
-                            JSONArray attachments = message.getJSONArray("attachments");
+                            String message = response.getString("message");
+                            JSONObject msgObject = new JSONObject(message);
+                            JSONArray attachments = msgObject.getJSONArray("attachments");
                             if (attachments.length() > 0) {
                                 String path = attachments.getJSONObject(0).getString("path");
                                 String name = attachments.getJSONObject(0).getString("name");
