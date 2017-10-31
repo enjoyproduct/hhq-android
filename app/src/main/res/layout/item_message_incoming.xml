@@ -35,6 +35,7 @@
                 android:layout_height="83dp"
                 android:layout_margin="@dimen/dimen_8dp"
                 android:visibility="gone"
+                android:adjustViewBounds="true"
                 />
             <TextView
                 android:id="@+id/tv_message"

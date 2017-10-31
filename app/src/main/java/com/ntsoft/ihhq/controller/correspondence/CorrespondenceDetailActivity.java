@@ -258,7 +258,8 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 MessageModel messageModel = new MessageModel(jsonObject);
                                 messageModel.type = 0;
-                                if (messageModel.sender_id == Global.getInstance().me.id) {
+                                int senderId = messageModel.sender_id;
+                                if (senderId == Global.getInstance().me.id) {
                                     messageModel.isIncoming = false;
                                 } else {
                                     messageModel.isIncoming = true;
@@ -277,6 +278,11 @@ public class CorrespondenceDetailActivity extends AppCompatActivity {
                                         messageModel1.attachmentName = attchObj.getString("name");
                                         messageModel1.attachmentPath = attchObj.getString("path");
                                         messageModel1.type = 1;
+                                        if (senderId == Global.getInstance().me.id) {
+                                            messageModel1.isIncoming = false;
+                                        } else {
+                                            messageModel1.isIncoming = true;
+                                        }
                                         arrMessages.add(messageModel1);
                                     }
                                 }
